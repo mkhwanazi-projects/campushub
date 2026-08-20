@@ -528,21 +528,25 @@
             transform: scaleY(1.35);
         }
 
+        /* ===== FIXED LIGHT CONE (starts under the shade) ===== */
         .light-cone {
             position: absolute;
-            top: 140px;
+            top: 70px;                          /* starts right under the shade */
             left: 50%;
             transform: translateX(-50%);
-            width: 320px;
-            height: 280px;
-            background: linear-gradient(to bottom,
-                rgba(0, 255, 195, 0.45) 0%,
-                rgba(0, 195, 160, 0.2) 50%,
-                transparent 100%);
-            clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+            width: 420px;
+            height: 340px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0, 255, 195, 0.55) 0%,
+                rgba(0, 255, 195, 0.25) 35%,
+                rgba(0, 195, 160, 0.12) 70%,
+                transparent 100%
+            );
+            clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
             opacity: 0;
             pointer-events: none;
-            filter: blur(4px);
+            filter: blur(6px);
             transition: opacity 0.5s ease;
             z-index: 2;
         }
@@ -666,7 +670,11 @@
             .container { margin: 60px auto 20px auto; width: 88%; max-width: 420px; padding: 18px; }
             .links-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .link-card { padding: 22px 8px; font-size: 13px; }
-            .light-cone { width: 260px; height: 240px; }
+            .light-cone { 
+                width: 340px; 
+                height: 300px; 
+                top: 65px;
+            }
             .greeting-card { 
                 padding: 16px 20px; 
                 min-width: 240px;
@@ -691,7 +699,7 @@
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
                 <div class="lamp-stem"></div>
-                <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Pull lamp cord"></div>
+                <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
 
                 <div class="robot">
                     <div class="robot-face">
@@ -703,7 +711,7 @@
             </div>
 
             <div class="instruction-box">
-                <p class="splash-instruction" id="splashHint">Pull the cord to illuminate</p>
+                <p class="splash-instruction" id="splashHint">Click the cord to illuminate</p>
             </div>
 
             <div class="greeting-card">
@@ -1339,4 +1347,4 @@
     });
     </script>
 </body>
-                </html>
+    </html>
