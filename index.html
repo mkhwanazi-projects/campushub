@@ -1029,10 +1029,33 @@
         if (event.target === modal) { modal.classList.remove("active"); }
     });
 
-    var greetingText = "Good Evening, Student!";
+    // ========== UPDATED GREETING LOGIC ==========
+    var classicGreetings = [];
     var currentHour = new Date().getHours();
-    if (currentHour < 12) { greetingText = "Good Morning, Student!"; }
-    else if (currentHour < 18) { greetingText = "Good Afternoon, Student!"; }
+
+    if (currentHour < 12) {
+        classicGreetings = [
+            "Good Morning, Student!",
+            "Let's dive in. What do you need?",
+            "Focus mode on. What's the main goal today?"
+        ];
+    } else if (currentHour < 18) {
+        classicGreetings = [
+            "Good Afternoon, Student!",
+            "Welcome back! What's the plan?",
+            "Let's dive in. What do you need?"
+        ];
+    } else {
+        classicGreetings = [
+            "Good Evening, Student!",
+            "Working late? Let's get things done.",
+            "Welcome back! What's the plan?",
+            "Focus mode on. What's the main goal today?"
+        ];
+    }
+
+    // Pick one randomly
+    var greetingText = classicGreetings[Math.floor(Math.random() * classicGreetings.length)];
 
     var index = 0;
     var isLightsOn = false;
@@ -1306,4 +1329,4 @@
     });
     </script>
 </body>
-    </html>
+                        </html>
