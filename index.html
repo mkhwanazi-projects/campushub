@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Link Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
     <style>
         :root {
@@ -230,6 +230,7 @@
             text-align: left;
         }
 
+        /* DASHBOARD LIGHT BULB ICON TOGGLE */
         .theme-switch-wrapper {
             position: absolute;
             top: 25px;
@@ -383,172 +384,185 @@
             font-size: 14px;
         }
 
-        /* TIKTOK STYLE LAMP SPLASH SCREEN ENGINE */
+        /* PREMIUM MINIMAL LAMP SPLASH SCREEN ENGINE */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0b1118;
+            background-color: #000000; /* Pitch black canvas background as requested */
             overflow: hidden;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999; 
-            font-family: 'Poppins', sans-serif;
             transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), visibility 1s;
         }
 
-        /* Glowing Background Blobs */
-        .blob {
+        /* Beautiful glowing environment maps */
+        .smoke-container {
             position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.15;
-            transition: opacity 1s ease;
+            width: 100%; height: 100%; top: 0; left: 0;
+            filter: blur(80px);
+            opacity: 0; 
+            mix-blend-mode: screen;
+            transition: opacity 1.2s ease;
         }
-        .blob-1 {
-            width: 350px; height: 350px;
-            background: #00ffc3;
-            top: -50px; left: -50px;
-        }
-        .blob-2 {
-            width: 300px; height: 300px;
-            background: #00c3ff;
-            bottom: -50px; right: -50px;
-        }
+        #splash-screen.lights-on .smoke-container { opacity: 0.45; }
 
-        /* Center Split Card Container */
-        .splash-card {
-            width: 90%;
-            max-width: 720px;
-            height: 380px;
-            background: rgba(18, 26, 36, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            display: flex;
-            overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
+        .smoke-cloud { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
+        .cloud-cyan { width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,212,255,0.4) 0%, rgba(0,212,255,0) 70%); top: -10%; left: -10%; }
+        .cloud-purple { width: 600px; height: 600px; background: radial-gradient(circle, rgba(130,0,255,0.3) 0%, rgba(130,0,255,0) 70%); bottom: -20%; right: -10%; }
+
+        .splash-content { 
+            position: relative;
+            text-align: center; 
+            width: 100%; max-width: 600px;
             z-index: 2;
-            position: relative;
-        }
-
-        /* Left Section: Lamp & Mascot */
-        .card-left {
-            width: 42%;
-            background: #0f1722;
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            padding-bottom: 25px;
-            overflow: hidden;
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 0px;
         }
 
-        /* SVG Hanging Lamp */
-        .lamp-wrapper {
+        /* PULL CHAIN INTERACTIVE LAMP GRAPHICS */
+        .lamp-box {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .lamp-shade {
+            width: 130px;
+            height: 65px;
+            background: #232a31;
+            border-radius: 60px 60px 12px 12px;
+            position: relative;
+            z-index: 10;
+            transition: background 0.25s, box-shadow 0.25s;
+            margin-top: 20px;
+        }
+        #splash-screen.lights-on .lamp-shade {
+            background: #fffdf0;
+            box-shadow: 0 -5px 25px rgba(255,235,160,0.4), 0 5px 30px #f1c40f;
+        }
+
+        .lamp-stem {
+            width: 6px;
+            height: 125px;
+            background: #4a5568;
             position: absolute;
             top: 0;
-            width: 100%;
-            height: 180px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .lamp-svg {
-            width: 110px;
-            height: 170px;
             z-index: 5;
+            transition: background 0.3s;
         }
+        #splash-screen.lights-on .lamp-stem { background: #967134; }
 
-        .pull-cord-trigger {
-            cursor: pointer;
-        }
-
-        /* Dynamic Floor Light Cone Glow */
-        .floor-glow {
+        /* Elegant Pull Switch Chain Mechanism */
+        .pull-cord {
             position: absolute;
-            bottom: 0;
+            top: 85px;
+            left: calc(50% + 40px); /* Offset perfectly to the right side of the lamp */
+            width: 2px;
+            height: 75px;
+            background: #a0aec0;
+            z-index: 8;
+            cursor: pointer;
+            transform-origin: top center;
+            transition: transform 0.12s ease-out, background 0.3s;
+        }
+        .pull-cord::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: -3px;
+            width: 8px;
+            height: 8px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        #splash-screen.lights-on .pull-cord { background: #d69e2e; }
+        #splash-screen.lights-on .pull-cord::after { background: #ecc94b; }
+
+        /* Simulated Spring Drag Animation on Pull click */
+        .pull-cord.snapping {
+            transform: scaleY(1.4);
+        }
+
+        /* PERFECT TRAPEZOID LIGHT CONE BEAM */
+        .light-cone {
+            position: absolute;
+            top: 85px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 100%;
-            height: 160px;
-            background: radial-gradient(ellipse at bottom, rgba(0, 255, 195, 0.35) 0%, rgba(0, 255, 195, 0) 70%);
+            width: 550px; 
+            height: 320px; 
             opacity: 0;
-            transition: opacity 0.5s ease;
             pointer-events: none;
+            z-index: 2;
+            
+            clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
+            
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 245, 200, 0.45) 0%,
+                rgba(255, 240, 180, 0.22) 55%,
+                rgba(255, 240, 180, 0.04) 90%,
+                rgba(255, 240, 180, 0) 100%
+            );
+            filter: blur(5px);
+            transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-        #splash-screen.lights-on .floor-glow { opacity: 1; }
-
-        /* Mascot Character */
-        .mascot-container {
-            width: 85px;
-            height: 85px;
-            z-index: 6;
-            position: relative;
-        }
-
-        .mascot-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .mascot-eye {
-            transition: transform 0.15s ease;
-            transform-origin: center;
+        #splash-screen.lights-on .light-cone {
+            opacity: 1;
         }
 
-        /* Right Section: Welcome & Dynamic Greeting Output */
-        .card-right {
-            width: 58%;
-            padding: 40px 35px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            text-align: left;
-            box-sizing: border-box;
-        }
-
-        .splash-title {
-            color: #ffffff;
-            font-size: 26px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            letter-spacing: -0.5px;
-        }
-
-        .splash-sub {
-            color: #7a8b9e;
-            font-size: 12px;
-            margin: 0 0 25px 0;
-            line-height: 1.4;
-        }
-
-        .greeting-display-box {
-            width: 100%;
-            min-height: 80px;
+        .instruction-box {
+            height: 30px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
+            justify-content: center;
+        }
+
+        .splash-instruction {
+            color: #5c6975;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            margin: 0;
+            transition: opacity 0.25s ease;
+        }
+        #splash-screen.lights-on .splash-instruction { opacity: 0; }
+
+        .greeting-box {
+            width: 100%;
+            height: 60px;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            z-index: 3;
         }
 
         #welcome-msg {
-            color: #00ffc3;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: #ffffff; 
+            font-family: 'Montserrat', sans-serif; 
+            font-size: 24px; font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 0.5px; 
             display: inline-block;
-            border-right: 3px solid #00ffc3;
-            white-space: normal;
-            word-break: break-word;
-            margin: 0;
-            padding-right: 6px;
-            text-shadow: 0 0 12px rgba(0, 255, 195, 0.4);
+            border-right: 3px solid #ffffff; 
+            white-space: normal; word-break: break-word;
+            margin: 0 auto; padding-right: 6px;
+            text-shadow: 0 0 15px rgba(255,255,255,0.4), 0 0 25px #00d4ff; 
             animation: blinkCursor 0.75s step-end infinite;
             line-height: 1.4;
+            min-height: 34px;
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -556,78 +570,37 @@
 
         @keyframes blinkCursor {
             from, to { border-color: transparent }
-            50% { border-color: #00ffc3; }
+            50% { border-color: #ffffff; }
         }
 
         .fade-out { opacity: 0 !important; visibility: hidden !important; }
 
-        @media (max-width: 650px) {
-            .splash-card {
-                flex-direction: column;
-                height: auto;
-                max-width: 340px;
-            }
-            .card-left {
-                width: 100%;
-                height: 200px;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            }
-            .card-right {
-                width: 100%;
-                padding: 25px 20px;
-                align-items: center;
-                text-align: center;
-            }
-            .greeting-display-box {
-                justify-content: center;
-            }
+        @media (max-width: 500px) {
+            .container { margin: 60px auto 20px auto; width: 88%; max-width: 420px; padding: 18px; }
+            .links-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .link-card { padding: 22px 8px; font-size: 13px; }
+            .light-cone { width: 440px; height: 320px; }
         }
     </style>
 </head>
 <body> 
     <div id="splash-screen">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-
-        <div class="splash-card">
-            <!-- Left Side: Interactive Lamp & Character -->
-            <div class="card-left">
-                <div class="floor-glow"></div>
-                
-                <div class="lamp-wrapper">
-                    <svg class="lamp-svg" viewBox="0 0 100 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <line x1="50" y1="0" x2="50" y2="40" stroke="#2a384b" stroke-width="3"/>
-                        <path d="M25 70 C25 45, 75 45, 75 70 Z" fill="#1e293b" id="lampShadeSvg"/>
-                        <circle cx="50" cy="72" r="8" fill="#334155" id="bulbSvg"/>
-                        
-                        <!-- Pull Switch Cord -->
-                        <g class="pull-cord-trigger" onclick="triggerLampSwitch()">
-                            <line id="cordLine" x1="62" y1="65" x2="62" y2="115" stroke="#64748b" stroke-width="2" stroke-dasharray="2 2"/>
-                            <circle id="cordHandle" cx="62" cy="118" r="4" fill="#94a3b8"/>
-                        </g>
-                    </svg>
-                </div>
-
-                <!-- Cute Mascot Character -->
-                <div class="mascot-container">
-                    <svg class="mascot-svg" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="#00ffc3"/>
-                        <circle class="mascot-eye" id="eyeLeft" cx="35" cy="45" r="5" fill="#0f1722"/>
-                        <circle class="mascot-eye" id="eyeRight" cx="65" cy="45" r="5" fill="#0f1722"/>
-                        <path d="M 40 62 Q 50 72 60 62" stroke="#0f1722" stroke-width="4" stroke-linecap="round" fill="none"/>
-                    </svg>
-                </div>
+        <div class="smoke-container">
+            <div class="smoke-cloud cloud-cyan"></div>
+            <div class="smoke-cloud cloud-purple"></div>
+        </div>
+        <div class="splash-content">
+            <div class="lamp-box">
+                <div class="light-cone"></div>
+                <div class="lamp-stem"></div>
+                <div class="lamp-shade"></div>
+                <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Pull lamp cord"></div>
             </div>
-
-            <!-- Right Side: Content Box -->
-            <div class="card-right">
-                <h2 class="splash-title">Welcome Back.</h2>
-                <p class="splash-sub" id="splashHint">Pull the cord to illuminate your path</p>
-                
-                <div class="greeting-display-box">
-                    <h1 id="welcome-msg"></h1>
-                </div>
+            <div class="instruction-box">
+                <p class="splash-instruction" id="splashHint">Pull the cord to turn on</p>
+            </div>
+            <div class="greeting-box">
+                <h1 id="welcome-msg"></h1>
             </div>
         </div>
     </div>
@@ -975,28 +948,16 @@
         if (isLightsOn) return; 
         isLightsOn = true;
 
+        var cord = document.getElementById("pullCord");
         var splash = document.getElementById("splash-screen");
-        var bulb = document.getElementById("bulbSvg");
-        var shade = document.getElementById("lampShadeSvg");
-        var cordLine = document.getElementById("cordLine");
-        var cordHandle = document.getElementById("cordHandle");
-
-        clickAudio.play().catch(function(e) { console.log("Audio playback blocked: ", e); });
-
-        // Animate pull cord spring snapping down
-        if(cordLine && cordHandle) {
-            cordLine.setAttribute("y2", "130");
-            cordHandle.setAttribute("cy", "133");
-            setTimeout(function() {
-                cordLine.setAttribute("y2", "115");
-                cordHandle.setAttribute("cy", "118");
-            }, 150);
-        }
+        
+        clickAudio.play().catch(function(e) { console.log("Audio playback blocked until user gesture: ", e); });
+        
+        cord.classList.add("snapping");
 
         setTimeout(function() {
+            cord.classList.remove("snapping");
             splash.classList.add("lights-on");
-            if(bulb) bulb.setAttribute("fill", "#00ffc3");
-            if(shade) shade.setAttribute("fill", "#2a384b");
             setTimeout(typeWriterSplash, 350);
         }, 120);
     }
@@ -1023,19 +984,6 @@
             }, 1000);
         }
     }
-
-    // Eye Tracking Animation for Mascot Character
-    document.addEventListener("mousemove", function(e) {
-        var eyeLeft = document.getElementById("eyeLeft");
-        var eyeRight = document.getElementById("eyeRight");
-        if (!eyeLeft || !eyeRight) return;
-
-        var x = (e.clientX / window.innerWidth - 0.5) * 8;
-        var y = (e.clientY / window.innerHeight - 0.5) * 8;
-
-        eyeLeft.style.transform = "translate(" + x + "px, " + y + "px)";
-        eyeRight.style.transform = "translate(" + x + "px, " + y + "px)";
-    });
 
     var ICASS_CONFIGS = {
         vocational: {
@@ -1229,6 +1177,7 @@
         setupAccordion("aboutToggle", "aboutMenu", "aboutArrow");
         setupAccordion("icassToggle", "icassMenu", "icassArrow");
 
+        // Machining Formula Parser (Updated with .toFixed(2) rounding accuracy)
         var calculateBtn = document.getElementById("calculateBtn");
         if (calculateBtn) {
             calculateBtn.addEventListener("click", function() {
@@ -1267,4 +1216,4 @@
     });
     </script>
 </body>
-</html>
+            </html>
