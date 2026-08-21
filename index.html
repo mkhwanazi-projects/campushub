@@ -469,7 +469,6 @@
             flex-direction: column;
             align-items: center;
             transform-origin: top center;
-            /* NO animation here on start */
         }
 
         /* Only start swinging AFTER the cord is clicked */
@@ -510,11 +509,11 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
-        /* ===== PULL CORD - moved a bit to the right ===== */
+        /* ===== PULL CORD ===== */
         .pull-cord {
             position: absolute;
             top: 138px;
-            left: 52px;              /* moved a little to the right */
+            left: 52px;
             width: 2px;
             height: 55px;
             background: #7a8a86;
@@ -571,7 +570,7 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - only moves UP & DOWN ===== */
+        /* ===== ROBOT - visible + floating from the start ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
@@ -584,14 +583,17 @@
 
         .robot {
             position: relative;
-            transform: scale(0.7);
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        #splash-screen.lights-on .robot {
-            opacity: 1;
             transform: scale(1);
+            opacity: 1;
             animation: robotFloat 2.4s ease-in-out infinite;
+        }
+
+        /* Hide the robot after the cord is clicked */
+        #splash-screen.lights-on .robot {
+            opacity: 0;
+            transform: scale(0.6);
+            animation: none;
+            transition: all 0.5s ease;
         }
 
         @keyframes robotFloat {
@@ -1393,4 +1395,4 @@
     });
     </script>
 </body>
-                    </html>
+    </html>
