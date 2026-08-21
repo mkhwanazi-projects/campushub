@@ -464,12 +464,12 @@
         .lamp-box {
             position: relative;
             width: 180px;
-            height: 280px;
+            height: 200px;               /* reduced height */
             display: flex;
             flex-direction: column;
             align-items: center;
             transform-origin: top center;
-            animation: lampSwing 3.2s ease-in-out infinite; /* slightly faster */
+            animation: lampSwing 3.2s ease-in-out infinite;
         }
 
         @keyframes lampSwing {
@@ -505,13 +505,13 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
-        /* ===== PULL CORD - now on the LEFT side (as you marked) ===== */
+        /* ===== PULL CORD - properly attached to bottom-left of shade ===== */
         .pull-cord {
             position: absolute;
-            top: 68px;
-            left: calc(50% - 48px);          /* moved to left side */
+            top: 68px;                       /* starts exactly at the bottom of the shade */
+            left: 18px;                      /* left side of the shade */
             width: 2px;
-            height: 55px;
+            height: 52px;
             background: #7a8a86;
             cursor: pointer;
             transform-origin: top center;
@@ -566,27 +566,32 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - only moves UP & DOWN ===== */
+        /* ===== ROBOT - OUTSIDE the swinging lamp so it only moves up/down ===== */
+        .robot-wrapper {
+            position: relative;
+            width: 180px;
+            height: 110px;
+            margin-top: -10px;
+            display: flex;
+            justify-content: center;
+            z-index: 4;
+        }
+
         .robot {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%) scale(0.7);
+            position: relative;
+            transform: scale(0.7);
             opacity: 0;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 4;
-            /* Important: counter the parent swing so robot stays centered */
-            animation: none;
         }
         #splash-screen.lights-on .robot {
             opacity: 1;
-            transform: translateX(-50%) scale(1);
-            animation: robotFloat 2.4s ease-in-out infinite; /* faster up-down */
+            transform: scale(1);
+            animation: robotFloat 2.4s ease-in-out infinite;
         }
 
         @keyframes robotFloat {
-            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-            50%     { transform: translateX(-50%) translateY(-10px) scale(1.04); }
+            0%, 100% { transform: translateY(0) scale(1); }
+            50%     { transform: translateY(-10px) scale(1.04); }
         }
 
         .robot-face {
@@ -725,15 +730,18 @@
         <div class="stars"></div>
 
         <div class="splash-content">
+            <!-- Swinging lamp -->
             <div class="lamp-box">
                 <div class="lamp-rope"></div>
-                
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
                 
-                <!-- Pull cord now on the LEFT -->
+                <!-- Pull cord properly attached -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
+            </div>
 
+            <!-- Robot is OUTSIDE the swinging box → only moves up & down -->
+            <div class="robot-wrapper">
                 <div class="robot">
                     <div class="robot-face">
                         <div class="robot-eye left"></div>
@@ -1380,4 +1388,4 @@
     });
     </script>
 </body>
-                        </html>
+                    </html>
