@@ -460,13 +460,35 @@
             gap: 0;
         }
 
+        /* ===== SWINGING LAMP (no thick stem) ===== */
         .lamp-box {
             position: relative;
             width: 180px;
-            height: 260px;
+            height: 280px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transform-origin: top center;
+            animation: lampSwing 4.5s ease-in-out infinite;
+        }
+
+        @keyframes lampSwing {
+            0%   { transform: rotate(-4deg); }
+            50%  { transform: rotate(4deg); }
+            100% { transform: rotate(-4deg); }
+        }
+
+        /* Thin rope from ceiling */
+        .lamp-rope {
+            width: 3px;
+            height: 70px;
+            background: #3a4a46;
+            margin-bottom: -2px;
+            border-radius: 2px;
+            transition: background 0.3s;
+        }
+        #splash-screen.lights-on .lamp-rope {
+            background: #00a88a;
         }
 
         .lamp-shade {
@@ -481,17 +503,6 @@
         #splash-screen.lights-on .lamp-shade {
             background: linear-gradient(180deg, #00ffc3 0%, #00c3a0 100%);
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
-        }
-
-        .lamp-stem {
-            width: 6px;
-            height: 90px;
-            background: #3a4a46;
-            margin-top: -2px;
-            transition: background 0.3s;
-        }
-        #splash-screen.lights-on .lamp-stem {
-            background: #00a88a;
         }
 
         .pull-cord {
@@ -528,7 +539,7 @@
             transform: scaleY(1.35);
         }
 
-        /* ===== FIXED LIGHT CONE ===== */
+        /* Light cone */
         .light-cone {
             position: absolute;
             top: 70px;
@@ -554,7 +565,7 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT WITH FLOATING + BLINKING ===== */
+        /* Robot */
         .robot {
             position: absolute;
             bottom: 30px;
@@ -712,9 +723,12 @@
 
         <div class="splash-content">
             <div class="lamp-box">
+                <!-- Thin rope instead of thick stem -->
+                <div class="lamp-rope"></div>
+                
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
-                <div class="lamp-stem"></div>
+                
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
 
                 <div class="robot">
