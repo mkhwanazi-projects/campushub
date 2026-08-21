@@ -525,25 +525,25 @@
             transform: scaleY(1.35);
         }
 
-        /* Realistic light cone */
+        /* Realistic light cone - gap fixed */
         .light-cone {
             position: absolute;
-            top: 145px;
+            top: 108px;
             left: 50%;
             transform: translateX(-50%);
             width: 380px;
-            height: 320px;
+            height: 340px;
             background: radial-gradient(
                 ellipse at top,
-                rgba(0, 255, 195, 0.55) 0%,
-                rgba(0, 255, 195, 0.25) 25%,
-                rgba(0, 195, 160, 0.1) 55%,
+                rgba(0, 255, 195, 0.7) 0%,
+                rgba(0, 255, 195, 0.35) 20%,
+                rgba(0, 195, 160, 0.15) 50%,
                 transparent 75%
             );
-            clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
+            clip-path: polygon(40% 0%, 60% 0%, 100% 100%, 0% 100%);
             opacity: 0;
             pointer-events: none;
-            filter: blur(8px);
+            filter: blur(6px);
             transition: opacity 0.6s ease;
             z-index: 2;
         }
@@ -722,7 +722,7 @@
             .link-card { padding: 22px 8px; font-size: 13px; }
             .light-cone { 
                 width: 300px; 
-                height: 280px; 
+                height: 300px; 
             }
             .greeting-card { 
                 padding: 16px 20px; 
@@ -1415,4 +1415,4 @@
     });
     </script>
 </body>
-</html>
+                        </html>
