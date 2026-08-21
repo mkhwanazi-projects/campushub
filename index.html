@@ -490,13 +490,13 @@
             filter: drop-shadow(0 0 25px #00ffc3) drop-shadow(0 0 50px rgba(0,255,195,0.4));
         }
 
-        /* Pull cord */
+        /* Pull cord - properly attached to bottom of shade */
         .pull-cord {
             position: absolute;
-            top: 148px;
-            left: 78px;
+            top: 112px;
+            left: 72px;
             width: 2px;
-            height: 58px;
+            height: 55px;
             background: #7a8a86;
             cursor: pointer;
             transform-origin: top center;
@@ -551,7 +551,7 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - visible from start ===== */
+        /* ===== ROBOT - 3D look + eyes looking left/right ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
@@ -582,43 +582,70 @@
         }
 
         .robot-face {
-            width: 90px;
-            height: 90px;
-            background: #0d2a24;
+            width: 95px;
+            height: 95px;
+            background: radial-gradient(circle at 30% 30%, #1a3d35, #0d2a24 70%);
             border: 3px solid #00ffc3;
             border-radius: 50%;
             position: relative;
-            box-shadow: 0 0 30px rgba(0,255,195,0.5);
+            box-shadow: 
+                0 0 25px rgba(0,255,195,0.5),
+                inset 0 -8px 15px rgba(0,0,0,0.4),
+                inset 0 8px 12px rgba(0,255,195,0.15);
         }
 
+        /* Eyes that look left and right */
         .robot-eye {
             position: absolute;
-            top: 28px;
-            width: 14px;
-            height: 14px;
+            top: 30px;
+            width: 16px;
+            height: 16px;
             background: #00ffc3;
             border-radius: 50%;
-            box-shadow: 0 0 10px #00ffc3;
-            animation: blink 3.5s infinite;
+            box-shadow: 0 0 12px #00ffc3;
+            animation: lookAround 4s ease-in-out infinite;
         }
-        .robot-eye.left { left: 22px; }
-        .robot-eye.right { right: 22px; animation-delay: 0.1s; }
+        .robot-eye.left { 
+            left: 22px; 
+        }
+        .robot-eye.right { 
+            right: 22px; 
+            animation-delay: 0.15s;
+        }
+
+        @keyframes lookAround {
+            0%, 20%   { transform: translateX(0); }
+            30%, 45%  { transform: translateX(-5px); }   /* look left */
+            55%, 70%  { transform: translateX(5px); }    /* look right */
+            80%, 100% { transform: translateX(0); }
+        }
+
+        /* Keep the blink */
+        .robot-eye::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: #00ffc3;
+            border-radius: 50%;
+            animation: blink 3.8s infinite;
+        }
 
         @keyframes blink {
-            0%, 45%, 55%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.1); }
+            0%, 42%, 52%, 100% { transform: scaleY(1); }
+            47% { transform: scaleY(0.1); }
         }
 
         .robot-mouth {
             position: absolute;
-            bottom: 22px;
+            bottom: 24px;
             left: 50%;
             transform: translateX(-50%);
-            width: 28px;
-            height: 14px;
+            width: 30px;
+            height: 15px;
             border: 3px solid #00ffc3;
             border-top: none;
             border-radius: 0 0 20px 20px;
+            box-shadow: 0 0 8px rgba(0,255,195,0.4);
         }
 
         .instruction-box {
@@ -1387,4 +1414,4 @@
     });
     </script>
 </body>
-                        </html>
+    </html>
