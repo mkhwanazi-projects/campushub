@@ -528,10 +528,10 @@
             transform: scaleY(1.35);
         }
 
-        /* ===== FIXED LIGHT CONE (starts under the shade) ===== */
+        /* ===== FIXED LIGHT CONE ===== */
         .light-cone {
             position: absolute;
-            top: 70px;                          /* starts right under the shade */
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
             width: 420px;
@@ -554,6 +554,7 @@
             opacity: 1;
         }
 
+        /* ===== ROBOT WITH FLOATING + BLINKING ===== */
         .robot {
             position: absolute;
             bottom: 30px;
@@ -566,7 +567,14 @@
         #splash-screen.lights-on .robot {
             opacity: 1;
             transform: translateX(-50%) scale(1);
+            animation: robotFloat 3s ease-in-out infinite;
         }
+
+        @keyframes robotFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
+            50%     { transform: translateX(-50%) translateY(-8px) scale(1.03); }
+        }
+
         .robot-face {
             width: 90px;
             height: 90px;
@@ -576,6 +584,7 @@
             position: relative;
             box-shadow: 0 0 30px rgba(0,255,195,0.5);
         }
+
         .robot-eye {
             position: absolute;
             top: 28px;
@@ -584,9 +593,16 @@
             background: #00ffc3;
             border-radius: 50%;
             box-shadow: 0 0 10px #00ffc3;
+            animation: blink 4s infinite;
         }
         .robot-eye.left { left: 22px; }
-        .robot-eye.right { right: 22px; }
+        .robot-eye.right { right: 22px; animation-delay: 0.1s; }
+
+        @keyframes blink {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+
         .robot-mouth {
             position: absolute;
             bottom: 22px;
