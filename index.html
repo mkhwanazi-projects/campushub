@@ -505,13 +505,13 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
-        /* ===== FIXED PULL CORD ===== */
+        /* ===== FIXED PULL CORD - now from the BOTTOM of the shade ===== */
         .pull-cord {
             position: absolute;
-            top: 68px;
-            left: 36px;                 /* ← FIXED: now attached to the shade */
+            top: 138px;              /* ← corrected: starts from bottom of shade */
+            left: 38px;
             width: 2px;
-            height: 52px;
+            height: 55px;
             background: #7a8a86;
             cursor: pointer;
             transform-origin: top center;
@@ -736,7 +736,7 @@
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
                 
-                <!-- Pull cord properly attached -->
+                <!-- Pull cord properly attached from the bottom -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
             </div>
 
@@ -1388,4 +1388,4 @@
     });
     </script>
 </body>
-                        </html>
+    </html>
