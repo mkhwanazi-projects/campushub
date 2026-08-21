@@ -460,7 +460,7 @@
             gap: 0;
         }
 
-        /* ===== SWINGING LAMP (no thick stem) ===== */
+        /* ===== SWINGING LAMP ===== */
         .lamp-box {
             position: relative;
             width: 180px;
@@ -469,13 +469,13 @@
             flex-direction: column;
             align-items: center;
             transform-origin: top center;
-            animation: lampSwing 4.5s ease-in-out infinite;
+            animation: lampSwing 3.2s ease-in-out infinite; /* slightly faster */
         }
 
         @keyframes lampSwing {
-            0%   { transform: rotate(-4deg); }
-            50%  { transform: rotate(4deg); }
-            100% { transform: rotate(-4deg); }
+            0%   { transform: rotate(-5deg); }
+            50%  { transform: rotate(5deg); }
+            100% { transform: rotate(-5deg); }
         }
 
         /* Thin rope from ceiling */
@@ -505,12 +505,13 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
+        /* ===== PULL CORD - now on the LEFT side (as you marked) ===== */
         .pull-cord {
             position: absolute;
-            top: 70px;
-            left: calc(50% + 38px);
+            top: 68px;
+            left: calc(50% - 48px);          /* moved to left side */
             width: 2px;
-            height: 70px;
+            height: 55px;
             background: #7a8a86;
             cursor: pointer;
             transform-origin: top center;
@@ -565,25 +566,27 @@
             opacity: 1;
         }
 
-        /* Robot */
+        /* ===== ROBOT - only moves UP & DOWN ===== */
         .robot {
             position: absolute;
-            bottom: 30px;
+            bottom: 25px;
             left: 50%;
             transform: translateX(-50%) scale(0.7);
             opacity: 0;
             transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             z-index: 4;
+            /* Important: counter the parent swing so robot stays centered */
+            animation: none;
         }
         #splash-screen.lights-on .robot {
             opacity: 1;
             transform: translateX(-50%) scale(1);
-            animation: robotFloat 3s ease-in-out infinite;
+            animation: robotFloat 2.4s ease-in-out infinite; /* faster up-down */
         }
 
         @keyframes robotFloat {
             0%, 100% { transform: translateX(-50%) translateY(0) scale(1); }
-            50%     { transform: translateX(-50%) translateY(-8px) scale(1.03); }
+            50%     { transform: translateX(-50%) translateY(-10px) scale(1.04); }
         }
 
         .robot-face {
@@ -604,7 +607,7 @@
             background: #00ffc3;
             border-radius: 50%;
             box-shadow: 0 0 10px #00ffc3;
-            animation: blink 4s infinite;
+            animation: blink 3.5s infinite;
         }
         .robot-eye.left { left: 22px; }
         .robot-eye.right { right: 22px; animation-delay: 0.1s; }
@@ -723,12 +726,12 @@
 
         <div class="splash-content">
             <div class="lamp-box">
-                <!-- Thin rope instead of thick stem -->
                 <div class="lamp-rope"></div>
                 
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
                 
+                <!-- Pull cord now on the LEFT -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
 
                 <div class="robot">
@@ -1377,4 +1380,4 @@
     });
     </script>
 </body>
-    </html>
+                        </html>
