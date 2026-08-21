@@ -230,7 +230,6 @@
             text-align: left;
         }
 
-        /* DASHBOARD LIGHT BULB ICON TOGGLE */
         .theme-switch-wrapper {
             position: absolute;
             top: 25px;
@@ -384,7 +383,7 @@
             font-size: 14px;
         }
 
-        /* ========== NEW GREEN LAMP + ROBOT SPLASH ========== */
+        /* ========== REALISTIC LAMP SPLASH ========== */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -409,7 +408,6 @@
             width: 500px; height: 500px;
             background: #00ffc3;
             top: -150px; left: -150px;
-            animation-duration: 22s;
         }
         .blob-2 {
             width: 400px; height: 400px;
@@ -460,122 +458,105 @@
             gap: 0;
         }
 
-        /* ===== LAMP - stays still until clicked ===== */
+        /* ===== REALISTIC LAMP ===== */
         .lamp-box {
             position: relative;
-            width: 180px;
-            height: 200px;
+            width: 200px;
+            height: 220px;
             display: flex;
             flex-direction: column;
             align-items: center;
             transform-origin: top center;
         }
 
-        /* Only start swinging AFTER the cord is clicked */
         #splash-screen.lights-on .lamp-box {
-            animation: lampSwing 3.2s ease-in-out infinite;
+            animation: lampSwing 3.5s ease-in-out infinite;
         }
 
         @keyframes lampSwing {
-            0%   { transform: rotate(-5deg); }
-            50%  { transform: rotate(5deg); }
-            100% { transform: rotate(-5deg); }
+            0%   { transform: rotate(-4deg); }
+            50%  { transform: rotate(4deg); }
+            100% { transform: rotate(-4deg); }
         }
 
-        /* Thin rope from ceiling */
-        .lamp-rope {
-            width: 3px;
-            height: 70px;
-            background: #3a4a46;
-            margin-bottom: -2px;
-            border-radius: 2px;
-            transition: background 0.3s;
-        }
-        #splash-screen.lights-on .lamp-rope {
-            background: #00a88a;
+        .lamp-svg {
+            width: 140px;
+            height: 160px;
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
+            transition: filter 0.5s ease;
         }
 
-        .lamp-shade {
-            width: 110px;
-            height: 70px;
-            background: #1a2e2a;
-            clip-path: polygon(15% 0%, 85% 0%, 100% 100%, 0% 100%);
-            position: relative;
-            z-index: 10;
-            transition: background 0.4s, box-shadow 0.4s;
-        }
-        #splash-screen.lights-on .lamp-shade {
-            background: linear-gradient(180deg, #00ffc3 0%, #00c3a0 100%);
-            box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
+        #splash-screen.lights-on .lamp-svg {
+            filter: drop-shadow(0 0 25px #00ffc3) drop-shadow(0 0 50px rgba(0,255,195,0.4));
         }
 
-        /* ===== PULL CORD ===== */
+        /* Pull cord */
         .pull-cord {
             position: absolute;
-            top: 138px;
-            left: 52px;
+            top: 148px;
+            left: 78px;
             width: 2px;
-            height: 55px;
+            height: 58px;
             background: #7a8a86;
             cursor: pointer;
             transform-origin: top center;
             transition: transform 0.12s ease-out, background 0.3s;
-            z-index: 12;
+            z-index: 20;
         }
         .pull-cord::after {
             content: '';
             position: absolute;
-            bottom: -10px;
-            left: -5px;
-            width: 12px;
-            height: 12px;
+            bottom: -11px;
+            left: -6px;
+            width: 14px;
+            height: 14px;
             background: #a0b0ac;
             border-radius: 50%;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
         #splash-screen.lights-on .pull-cord {
             background: #00ffc3;
         }
         #splash-screen.lights-on .pull-cord::after {
             background: #00ffc3;
-            box-shadow: 0 0 12px #00ffc3;
+            box-shadow: 0 0 15px #00ffc3;
         }
         .pull-cord.snapping {
             transform: scaleY(1.35);
         }
 
-        /* Light cone */
+        /* Realistic light cone */
         .light-cone {
             position: absolute;
-            top: 70px;
+            top: 145px;
             left: 50%;
             transform: translateX(-50%);
-            width: 420px;
-            height: 340px;
-            background: linear-gradient(
-                to bottom,
+            width: 380px;
+            height: 320px;
+            background: radial-gradient(
+                ellipse at top,
                 rgba(0, 255, 195, 0.55) 0%,
-                rgba(0, 255, 195, 0.25) 35%,
-                rgba(0, 195, 160, 0.12) 70%,
-                transparent 100%
+                rgba(0, 255, 195, 0.25) 25%,
+                rgba(0, 195, 160, 0.1) 55%,
+                transparent 75%
             );
-            clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
+            clip-path: polygon(38% 0%, 62% 0%, 100% 100%, 0% 100%);
             opacity: 0;
             pointer-events: none;
-            filter: blur(6px);
-            transition: opacity 0.5s ease;
+            filter: blur(8px);
+            transition: opacity 0.6s ease;
             z-index: 2;
         }
         #splash-screen.lights-on .light-cone {
             opacity: 1;
         }
 
-        /* ===== ROBOT - visible + floating from the start ===== */
+        /* ===== ROBOT - visible from start ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
             height: 110px;
-            margin-top: -10px;
+            margin-top: -15px;
             display: flex;
             justify-content: center;
             z-index: 4;
@@ -588,7 +569,6 @@
             animation: robotFloat 2.4s ease-in-out infinite;
         }
 
-        /* Hide the robot after the cord is clicked */
         #splash-screen.lights-on .robot {
             opacity: 0;
             transform: scale(0.6);
@@ -713,9 +693,8 @@
             .links-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .link-card { padding: 22px 8px; font-size: 13px; }
             .light-cone { 
-                width: 340px; 
-                height: 300px; 
-                top: 65px;
+                width: 300px; 
+                height: 280px; 
             }
             .greeting-card { 
                 padding: 16px 20px; 
@@ -723,13 +702,12 @@
             }
             #welcome-msg { 
                 font-size: 16px; 
-                letter-spacing: 0.2px;
             }
         }
     </style>
 </head>
 <body> 
-    <!-- ========== NEW GREEN LAMP + ROBOT SPLASH ========== -->
+    <!-- ========== REALISTIC LAMP + ROBOT SPLASH ========== -->
     <div id="splash-screen">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -737,17 +715,42 @@
         <div class="stars"></div>
 
         <div class="splash-content">
-            <!-- Swinging lamp -->
             <div class="lamp-box">
-                <div class="lamp-rope"></div>
+                <!-- Realistic SVG Lamp -->
+                <svg class="lamp-svg" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Ceiling rope -->
+                    <line x1="70" y1="0" x2="70" y2="42" stroke="#3a4a46" stroke-width="3" stroke-linecap="round"/>
+                    
+                    <!-- Lamp body / shade -->
+                    <defs>
+                        <linearGradient id="shadeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#1a2e2a"/>
+                            <stop offset="100%" stop-color="#0d1a18"/>
+                        </linearGradient>
+                        <linearGradient id="shadeLit" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00ffc3"/>
+                            <stop offset="40%" stop-color="#00c3a0"/>
+                            <stop offset="100%" stop-color="#007a66"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Outer shade -->
+                    <path d="M35 42 L105 42 L120 110 L20 110 Z" fill="url(#shadeGrad)" id="shadePath"/>
+                    
+                    <!-- Inner rim -->
+                    <ellipse cx="70" cy="110" rx="50" ry="6" fill="#0a1614"/>
+                    
+                    <!-- Light source inside (hidden until on) -->
+                    <ellipse cx="70" cy="95" rx="28" ry="12" fill="#00ffc3" opacity="0" id="innerGlow"/>
+                </svg>
+
                 <div class="light-cone"></div>
-                <div class="lamp-shade"></div>
                 
                 <!-- Pull cord -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
             </div>
 
-            <!-- Robot is OUTSIDE the swinging box → only moves up & down -->
+            <!-- Robot -->
             <div class="robot-wrapper">
                 <div class="robot">
                     <div class="robot-face">
@@ -768,6 +771,7 @@
         </div>
     </div>
 
+    <!-- Calculator Modal -->
     <div id="calc-modal" class="calc-overlay">
         <div class="calculator-box">
             <div class="calc-popup-header">
@@ -785,22 +789,18 @@
                     <button class="btn-input functional" onclick="appendValue('(')">(</button>
                     <button class="btn-input functional" onclick="appendValue(')')">)</button>
                     <button class="btn-input operator" onclick="appendValue('/')">÷</button>
-
                     <button class="btn-input" onclick="appendValue('7')">7</button>
                     <button class="btn-input" onclick="appendValue('8')">8</button>
                     <button class="btn-input" onclick="appendValue('9')">9</button>
                     <button class="btn-input" onclick="appendValue('*')">×</button>
-
                     <button class="btn-input" onclick="appendValue('4')">4</button>
                     <button class="btn-input" onclick="appendValue('5')">5</button>
                     <button class="btn-input" onclick="appendValue('6')">6</button>
                     <button class="btn-input" onclick="appendValue('-')">-</button>
-
                     <button class="btn-input" onclick="appendValue('1')">1</button>
                     <button class="btn-input" onclick="appendValue('2')">2</button>
                     <button class="btn-input" onclick="appendValue('3')">3</button>
                     <button class="btn-input" onclick="appendValue('+')">+</button>
-
                     <button class="btn-input" onclick="appendValue('0')">0</button>
                     <button class="btn-input" onclick="appendValue('.')">.</button>
                     <button class="btn-input functional" onclick="backspace()">⌫</button>
@@ -822,13 +822,11 @@
                         <option value="length"> Length</option>
                     </select>
                 </div>
-
                 <div class="calc-group" style="margin-bottom: 8px;">
                     <label>From:</label>
                     <select id="convFromUnit" class="calc-select" style="margin-bottom: 8px;" onchange="runUnitConversion()"></select>
                     <input type="number" id="convInputVal" class="conv-box-input" value="1" oninput="runUnitConversion()">
                 </div>
-
                 <div class="calc-group">
                     <label>To:</label>
                     <select id="convToUnit" class="calc-select" style="margin-bottom: 8px;" onchange="runUnitConversion()"></select>
@@ -914,11 +912,8 @@
                         <option value="vocational">🛠️ Vocational / General Courses (50% Sub-min Required)</option>
                         <option value="maths">📐 Fundamental Mathematics (30% Sub-min Required)</option>
                     </select>
-
                     <div id="icassInputsContainer"></div>
-
                     <button class="action-button" id="runIcassCalcBtn">📊 Evaluate Exam Qualification</button>
-
                     <div class="calc-result-box" style="margin-top: 15px; border-left: 4px solid #00d4ff;">
                         ⚖️ Continuous Assessment Score: <span id="icassScoreResult" style="color: #00d4ff; font-size: 16px;">0.0%</span>
                         <div id="icassStatusBadge" style="margin-top: 8px; font-size: 13px; font-weight: 800;"></div>
@@ -940,7 +935,6 @@
                         <option value="vc">(S) Cutting Speed (mm/s or m/min)</option>
                         <option value="diameter">(D) Workpiece Diameter (d in mm)</option>
                     </select>
-
                     <div class="calc-group" id="speedUnitGroup">
                         <label>Spindle Speed Input Format:</label>
                         <select id="speedUnit" class="calc-select" style="margin-bottom: 10px;">
@@ -948,19 +942,15 @@
                             <option value="rpm" selected>Revolutions Per Minute (RPM / rev/min)</option>
                         </select>
                     </div>
-                    
                     <div class="calc-group">
                         <label id="field1Label">Cutting Speed (S) in m/min:</label>
                         <input type="number" step="any" id="field1Input" class="calc-input" placeholder="e.g., 150" value="150">
                     </div>
-
                     <div class="calc-group">
                         <label id="field2Label">Workpiece Diameter (d) in mm:</label>
                         <input type="number" step="any" id="field2Input" class="calc-input" placeholder="e.g., 40" value="40">
                     </div>
-
                     <button class="action-button" id="calculateBtn">Run Machining Formula</button>
-
                     <div class="calc-result-box">
                          Calculated Output: <span id="rpmResult" style="color: #00d4ff;">375.13 RPM</span>
                     </div>
@@ -985,7 +975,6 @@
                     </p>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -1095,7 +1084,7 @@
         if (event.target === modal) { modal.classList.remove("active"); }
     });
 
-    // ========== UPDATED GREETING LOGIC ==========
+    // Greeting logic
     var classicGreetings = [];
     var currentHour = new Date().getHours();
 
@@ -1120,9 +1109,7 @@
         ];
     }
 
-    // Pick one randomly
     var greetingText = classicGreetings[Math.floor(Math.random() * classicGreetings.length)];
-
     var index = 0;
     var isLightsOn = false;
 
@@ -1133,6 +1120,12 @@
         var cord = document.getElementById("pullCord");
         var splash = document.getElementById("splash-screen");
         
+        // Change shade color when lit
+        var shadePath = document.getElementById("shadePath");
+        var innerGlow = document.getElementById("innerGlow");
+        if (shadePath) shadePath.setAttribute("fill", "url(#shadeLit)");
+        if (innerGlow) innerGlow.setAttribute("opacity", "0.8");
+
         cord.classList.add("snapping");
 
         setTimeout(function() {
@@ -1192,7 +1185,6 @@
         var stream = document.getElementById("icassSubjectStream").value;
         var container = document.getElementById("icassInputsContainer");
         if (!container) return;
-        
         container.innerHTML = "";
         ICASS_CONFIGS[stream].fields.forEach(function(field) {
             var html = '<div class="calc-group">' +
@@ -1395,4 +1387,4 @@
     });
     </script>
 </body>
-    </html>
+                        </html>
