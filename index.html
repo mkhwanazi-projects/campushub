@@ -551,7 +551,7 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - 3D look + eyes looking left/right ===== */
+        /* ===== ROBOT - Look Left, Right, Blink & Smile ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
@@ -594,7 +594,7 @@
                 inset 0 8px 12px rgba(0,255,195,0.15);
         }
 
-        /* Eyes that look left and right */
+        /* Eyes sequence: Look Left -> Look Right -> Center -> Blink */
         .robot-eye {
             position: absolute;
             top: 30px;
@@ -603,49 +603,50 @@
             background: #00ffc3;
             border-radius: 50%;
             box-shadow: 0 0 12px #00ffc3;
-            animation: lookAround 4s ease-in-out infinite;
+            animation: lookSequence 5s ease-in-out infinite;
         }
         .robot-eye.left { 
             left: 22px; 
         }
         .robot-eye.right { 
             right: 22px; 
-            animation-delay: 0.15s;
         }
 
-        @keyframes lookAround {
-            0%, 20%   { transform: translateX(0); }
-            30%, 45%  { transform: translateX(-5px); }   /* look left */
-            55%, 70%  { transform: translateX(5px); }    /* look right */
-            80%, 100% { transform: translateX(0); }
+        @keyframes lookSequence {
+            0%, 15%   { transform: translateX(-6px) scaleY(1); } /* Look Left */
+            25%, 40%  { transform: translateX(6px) scaleY(1); }  /* Look Right */
+            50%, 65%  { transform: translateX(0) scaleY(1); }    /* Center / Smile */
+            70%       { transform: translateX(0) scaleY(0.1); }  /* Blink */
+            75%, 100% { transform: translateX(0) scaleY(1); }    /* Open Eyes */
         }
 
-        /* Keep the blink */
-        .robot-eye::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: #00ffc3;
-            border-radius: 50%;
-            animation: blink 3.8s infinite;
-        }
-
-        @keyframes blink {
-            0%, 42%, 52%, 100% { transform: scaleY(1); }
-            47% { transform: scaleY(0.1); }
-        }
-
+        /* Mouth sequence: Neutral -> Smile */
         .robot-mouth {
             position: absolute;
-            bottom: 24px;
+            bottom: 22px;
             left: 50%;
             transform: translateX(-50%);
-            width: 30px;
-            height: 15px;
+            width: 22px;
+            height: 8px;
             border: 3px solid #00ffc3;
             border-top: none;
-            border-radius: 0 0 20px 20px;
+            border-radius: 0 0 12px 12px;
             box-shadow: 0 0 8px rgba(0,255,195,0.4);
+            animation: smileSequence 5s ease-in-out infinite;
+        }
+
+        @keyframes smileSequence {
+            0%, 45% {
+                width: 20px;
+                height: 6px;
+                border-radius: 0 0 10px 10px;
+            }
+            55%, 100% {
+                width: 32px;
+                height: 16px;
+                border-radius: 0 0 20px 20px;
+                box-shadow: 0 0 12px rgba(0,255,195,0.8);
+            }
         }
 
         .instruction-box {
@@ -1414,4 +1415,4 @@
     });
     </script>
 </body>
-    </html>
+</html>
