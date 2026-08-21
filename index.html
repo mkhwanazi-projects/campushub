@@ -460,7 +460,7 @@
             gap: 0;
         }
 
-        /* ===== SWINGING LAMP ===== */
+        /* ===== LAMP - stays still until clicked ===== */
         .lamp-box {
             position: relative;
             width: 180px;
@@ -469,6 +469,11 @@
             flex-direction: column;
             align-items: center;
             transform-origin: top center;
+            /* NO animation here on start */
+        }
+
+        /* Only start swinging AFTER the cord is clicked */
+        #splash-screen.lights-on .lamp-box {
             animation: lampSwing 3.2s ease-in-out infinite;
         }
 
@@ -505,11 +510,11 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
-        /* ===== FIXED PULL CORD - now from the BOTTOM of the shade ===== */
+        /* ===== PULL CORD - moved a bit to the right ===== */
         .pull-cord {
             position: absolute;
-            top: 138px;              /* ← corrected: starts from bottom of shade */
-            left: 38px;
+            top: 138px;
+            left: 52px;              /* moved a little to the right */
             width: 2px;
             height: 55px;
             background: #7a8a86;
@@ -736,7 +741,7 @@
                 <div class="light-cone"></div>
                 <div class="lamp-shade"></div>
                 
-                <!-- Pull cord properly attached from the bottom -->
+                <!-- Pull cord -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
             </div>
 
@@ -1388,4 +1393,4 @@
     });
     </script>
 </body>
-    </html>
+                    </html>
