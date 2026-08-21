@@ -464,7 +464,7 @@
         .lamp-box {
             position: relative;
             width: 180px;
-            height: 200px;               /* reduced height */
+            height: 200px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -505,11 +505,11 @@
             box-shadow: 0 0 40px #00ffc3, 0 0 80px rgba(0,255,195,0.4);
         }
 
-        /* ===== PULL CORD - properly attached to bottom-left of shade ===== */
+        /* ===== FIXED PULL CORD ===== */
         .pull-cord {
             position: absolute;
-            top: 68px;                       /* starts exactly at the bottom of the shade */
-            left: 18px;                      /* left side of the shade */
+            top: 68px;
+            left: 36px;                 /* ← FIXED: now attached to the shade */
             width: 2px;
             height: 52px;
             background: #7a8a86;
@@ -566,7 +566,7 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - OUTSIDE the swinging lamp so it only moves up/down ===== */
+        /* ===== ROBOT - only moves UP & DOWN ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
@@ -1388,4 +1388,4 @@
     });
     </script>
 </body>
-                    </html>
+                        </html>
