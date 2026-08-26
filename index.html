@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <link rel="icon" type="image/png" sizes="192x192" href="mfolozi.png">
-<link rel="apple-touch-icon" href="mfolozi.png">
-<meta name="theme-color" content="#000000">
+    <link rel="apple-touch-icon" href="mfolozi.png">
+    <meta name="theme-color" content="#000000">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Link Hub</title>
@@ -461,7 +461,6 @@
             gap: 0;
         }
 
-        /* ===== REALISTIC LAMP ===== */
         .lamp-box {
             position: relative;
             width: 200px;
@@ -493,7 +492,6 @@
             filter: drop-shadow(0 0 25px #00ffc3) drop-shadow(0 0 50px rgba(0,255,195,0.4));
         }
 
-        /* Pull cord - properly attached to bottom of shade */
         .pull-cord {
             position: absolute;
             top: 112px;
@@ -528,7 +526,6 @@
             transform: scaleY(1.35);
         }
 
-        /* Realistic light cone - gap fixed */
         .light-cone {
             position: absolute;
             top: 108px;
@@ -554,7 +551,6 @@
             opacity: 1;
         }
 
-        /* ===== ROBOT - Look Left, Right, Blink & Smile ===== */
         .robot-wrapper {
             position: relative;
             width: 180px;
@@ -597,7 +593,6 @@
                 inset 0 8px 12px rgba(0,255,195,0.15);
         }
 
-        /* Eyes sequence: Look Left -> Look Right -> Center -> Blink */
         .robot-eye {
             position: absolute;
             top: 30px;
@@ -608,22 +603,17 @@
             box-shadow: 0 0 12px #00ffc3;
             animation: lookSequence 5s ease-in-out infinite;
         }
-        .robot-eye.left { 
-            left: 22px; 
-        }
-        .robot-eye.right { 
-            right: 22px; 
-        }
+        .robot-eye.left { left: 22px; }
+        .robot-eye.right { right: 22px; }
 
         @keyframes lookSequence {
-            0%, 15%   { transform: translateX(-6px) scaleY(1); } /* Look Left */
-            25%, 40%  { transform: translateX(6px) scaleY(1); }  /* Look Right */
-            50%, 65%  { transform: translateX(0) scaleY(1); }    /* Center / Smile */
-            70%       { transform: translateX(0) scaleY(0.1); }  /* Blink */
-            75%, 100% { transform: translateX(0) scaleY(1); }    /* Open Eyes */
+            0%, 15%   { transform: translateX(-6px) scaleY(1); }
+            25%, 40%  { transform: translateX(6px) scaleY(1); }
+            50%, 65%  { transform: translateX(0) scaleY(1); }
+            70%       { transform: translateX(0) scaleY(0.1); }
+            75%, 100% { transform: translateX(0) scaleY(1); }
         }
 
-        /* Mouth sequence: Neutral -> Smile */
         .robot-mouth {
             position: absolute;
             bottom: 22px;
@@ -723,17 +713,9 @@
             .container { margin: 60px auto 20px auto; width: 88%; max-width: 420px; padding: 18px; }
             .links-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .link-card { padding: 22px 8px; font-size: 13px; }
-            .light-cone { 
-                width: 300px; 
-                height: 300px; 
-            }
-            .greeting-card { 
-                padding: 16px 20px; 
-                min-width: 240px;
-            }
-            #welcome-msg { 
-                font-size: 16px; 
-            }
+            .light-cone { width: 300px; height: 300px; }
+            .greeting-card { padding: 16px 20px; min-width: 240px; }
+            #welcome-msg { font-size: 16px; }
         }
     </style>
 </head>
@@ -747,12 +729,8 @@
 
         <div class="splash-content">
             <div class="lamp-box">
-                <!-- Realistic SVG Lamp -->
                 <svg class="lamp-svg" viewBox="0 0 140 160" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Ceiling rope -->
                     <line x1="70" y1="0" x2="70" y2="42" stroke="#3a4a46" stroke-width="3" stroke-linecap="round"/>
-                    
-                    <!-- Lamp body / shade -->
                     <defs>
                         <linearGradient id="shadeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                             <stop offset="0%" stop-color="#1a2e2a"/>
@@ -764,24 +742,15 @@
                             <stop offset="100%" stop-color="#007a66"/>
                         </linearGradient>
                     </defs>
-
-                    <!-- Outer shade -->
                     <path d="M35 42 L105 42 L120 110 L20 110 Z" fill="url(#shadeGrad)" id="shadePath"/>
-                    
-                    <!-- Inner rim -->
                     <ellipse cx="70" cy="110" rx="50" ry="6" fill="#0a1614"/>
-                    
-                    <!-- Light source inside (hidden until on) -->
                     <ellipse cx="70" cy="95" rx="28" ry="12" fill="#00ffc3" opacity="0" id="innerGlow"/>
                 </svg>
 
                 <div class="light-cone"></div>
-                
-                <!-- Pull cord -->
                 <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
             </div>
 
-            <!-- Robot -->
             <div class="robot-wrapper">
                 <div class="robot">
                     <div class="robot-face">
@@ -912,40 +881,40 @@
                 <span>Scientific Calculator</span>
             </div>
             
+            <!-- ========== FIXED TIMETABLE SECTION ========== -->
             <div class="link-card accordion-btn" id="timetableToggle">
-    <span style="display: flex; align-items: center; width: 100%; justify-content: center; gap: 8px;">
-        <span>📅</span> Campus Timetables <span class="arrow" id="timetableArrow">▼</span>
-    </span>
-</div>
+                <span style="display: flex; align-items: center; width: 100%; justify-content: center; gap: 8px;">
+                    <span>📅</span> Campus Timetables <span class="arrow" id="timetableArrow">▼</span>
+                </span>
+            </div>
 
-<div class="accordion-content" id="timetableMenu">
-    <div class="accordion-inner-box" style="padding: 12px;">
-        <p style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">
-            🏫 Mandeni Campus Timetable
-        </p>
+            <div class="accordion-content" id="timetableMenu">
+                <div class="accordion-inner-box" style="padding: 12px;">
+                    <p style="margin: 0 0 16px 0; font-size: 14px; font-weight: 600;">
+                        🏫 Mandeni Campus Timetable
+                    </p>
 
-        <!-- PDF Viewer -->
-        <div style="width: 100%; height: 420px; border-radius: 12px; overflow: hidden; background: #111; margin-bottom: 14px;">
-            <iframe 
-                src="/campushub/timetable.pdf" 
-                style="width: 100%; height: 100%; border: none;"
-                title="Campus Timetable">
-            </iframe>
-        </div>
+                    <!-- View Button -->
+                    <a href="/campushub/timetable.pdf" 
+                       target="_blank"
+                       class="action-button" 
+                       style="text-decoration: none; display: block; width: 80%; max-width: 280px; margin: 0 auto 12px auto; background: linear-gradient(135deg, #00c3a0, #00ffc3); color: #000;">
+                        👁️ View Timetable
+                    </a>
 
-        <!-- Download Button -->
-        <a href="/campushub/timetable.pdf" 
-           download="Mandeni-Campus-Timetable.pdf"
-           class="action-button" 
-           style="text-decoration: none; display: inline-block; width: 80%; max-width: 280px;">
-            📥 Download Timetable PDF
-        </a>
+                    <!-- Download Button -->
+                    <a href="/campushub/timetable.pdf" 
+                       download="Mandeni-Campus-Timetable.pdf"
+                       class="action-button" 
+                       style="text-decoration: none; display: block; width: 80%; max-width: 280px; margin: 0 auto;">
+                        📥 Download Timetable PDF
+                    </a>
 
-        <p style="margin: 12px 0 0 0; font-size: 11px; opacity: 0.7;">
-            Scroll inside the document to view the full timetable
-        </p>
-    </div>
-</div>
+                    <p style="margin: 14px 0 0 0; font-size: 11px; opacity: 0.7;">
+                        Tip: Use “View” to open it in your browser
+                    </p>
+                </div>
+            </div>
 
             <div class="link-card accordion-btn" id="icassToggle">
                 <span style="display: flex; align-items: center; width: 100%; justify-content: center; gap: 8px;">
@@ -1039,8 +1008,23 @@
         });
     }
 
+    function updateThemeColor(theme) {
+        var metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (!metaTheme) {
+            metaTheme = document.createElement('meta');
+            metaTheme.name = "theme-color";
+            document.head.appendChild(metaTheme);
+        }
+        if (theme === "light") {
+            metaTheme.setAttribute("content", "#f0f2f5");
+        } else {
+            metaTheme.setAttribute("content", "#000000");
+        }
+    }
+
     var savedTheme = localStorage.getItem("theme") || "dark";
     document.documentElement.setAttribute("data-theme", savedTheme);
+    updateThemeColor(savedTheme);
 
     function toggleCalculator() {
         var modal = document.getElementById("calc-modal");
@@ -1168,7 +1152,6 @@
         var cord = document.getElementById("pullCord");
         var splash = document.getElementById("splash-screen");
         
-        // Change shade color when lit
         var shadePath = document.getElementById("shadePath");
         var innerGlow = document.getElementById("innerGlow");
         if (shadePath) shadePath.setAttribute("fill", "url(#shadeLit)");
@@ -1430,9 +1413,10 @@
                 var targetTheme = (currentTheme === "dark") ? "light" : "dark";
                 document.documentElement.setAttribute("data-theme", targetTheme);
                 localStorage.setItem("theme", targetTheme);
+                updateThemeColor(targetTheme);
             });
         }
     });
     </script>
 </body>
-                        </html>
+    </html>
