@@ -1,4 +1,4 @@
-const CACHE_NAME = 'campus-hub-v7';
+const CACHE_NAME = 'campus-hub-v8';
 
 // Files that must be available offline from the start
 const PRE_CACHE = [
