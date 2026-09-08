@@ -9,6 +9,8 @@
     <title>Student Link Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
+    <!-- Tesseract.js for OCR -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f2f5;
@@ -386,6 +388,116 @@
             font-size: 14px;
         }
 
+        /* ========== FLOATING IMAGE SCANNER BUTTON ========== */
+        .floating-scanner-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--btn-gradient);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .floating-scanner-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
+        }
+
+        /* Scanner Modal */
+        .scanner-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--overlay-bg);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10001;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .scanner-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .scanner-box {
+            background: var(--container-bg);
+            backdrop-filter: blur(20px);
+            border: var(--card-border);
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+        .scanner-box h3 {
+            margin: 0 0 15px 0;
+            color: var(--card-text);
+            font-family: 'Montserrat', sans-serif;
+        }
+        .scanner-preview {
+            width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin: 10px 0;
+            display: none;
+        }
+        .scanner-result {
+            background: var(--calc-bg);
+            border: var(--card-border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
+            text-align: left;
+            color: var(--card-text);
+            font-size: 14px;
+            min-height: 80px;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .scanner-status {
+            font-size: 13px;
+            color: #00d4ff;
+            margin: 10px 0;
+            min-height: 20px;
+        }
+        .scanner-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .scanner-actions button, .scanner-actions label {
+            padding: 10px 18px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            background: var(--btn-gradient);
+            color: white;
+        }
+        .scanner-actions label {
+            display: inline-block;
+        }
+
         /* ========== REALISTIC LAMP SPLASH ========== */
         #splash-screen {
             position: fixed;
@@ -716,6 +828,7 @@
             .light-cone { width: 300px; height: 300px; }
             .greeting-card { padding: 16px 20px; min-width: 240px; }
             #welcome-msg { font-size: 16px; }
+            .floating-scanner-btn { bottom: 20px; right: 20px; width: 55px; height: 55px; }
         }
     </style>
 </head>
@@ -777,7 +890,7 @@
             <div class="calc-popup-header">
                 <span id="popup-title">Campus Calculator</span>
                 <div>
-                    <button class="mode-toggle-btn" id="panelToggleBtn" onclick="switchCalcMode()">🔄 Convert</button>
+                    <button class="mode-toggle-btn" id="panelToggleBtn" onclick="switchCalcMode()">Convert</button>
                     <button class="close-calc" onclick="toggleCalculator()">×</button>
                 </div>
             </div>
@@ -838,6 +951,47 @@
         </div>
     </div>
 
+    <!-- ========== IMAGE SCANNER MODAL ========== -->
+    <div id="scanner-modal" class="scanner-modal">
+        <div class="scanner-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <h3>Image Scanner</h3>
+                <button class="close-calc" onclick="closeScanner()">×</button>
+            </div>
+
+            <p style="font-size:13px; color:var(--card-text); opacity:0.8; margin:0 0 15px 0;">
+                Take a photo or upload an image to extract text
+            </p>
+
+            <div class="scanner-actions">
+                <label>
+                    Take Photo
+                    <input type="file" accept="image/*" capture="environment" id="scannerCamera" hidden onchange="handleImage(event)">
+                </label>
+                <label>
+                    Upload Image
+                    <input type="file" accept="image/*" id="scannerUpload" hidden onchange="handleImage(event)">
+                </label>
+            </div>
+
+            <img id="scannerPreview" class="scanner-preview" alt="Preview">
+
+            <div class="scanner-status" id="scannerStatus"></div>
+
+            <div class="scanner-result" id="scannerResult">Extracted text will appear here...</div>
+
+            <div class="scanner-actions" style="margin-top:15px;">
+                <button onclick="translateText()" id="translateBtn" style="display:none;">Translate Text</button>
+                <button onclick="copyText()" id="copyBtn" style="display:none;">Copy Text</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Image Scanner Button -->
+    <button class="floating-scanner-btn" onclick="openScanner()" title="Image Scanner">
+        📷
+    </button>
+
     <div class="container">
         <div class="theme-switch-wrapper">
             <button class="bulb-toggle" id="bulbToggleBtn" aria-label="Toggle Theme">
@@ -847,14 +1001,14 @@
             </button>
         </div>
 
-        <!-- ========== LOGO (Centered + 75px) ========== -->
+        <!-- Logo + Title -->
         <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 15px; width: 100%;">
             <img src="logo.jpg" alt="School Logo" style="width: 70px; height: 70px; object-fit: cover; border-radius: 50%; box-shadow: 0 0 10px rgba(0,212,255,0.3); flex-shrink: 0;">
             <h1 id="hubTitle" style="color: var(--hub-title); transition: color 0.4s ease; margin: 0;">Campus Hub</h1>
         </div>
         <p style="color: var(--text-color); font-weight:500; text-shadow:1px 1px 3px rgba(255,255,255,0.2); margin-top: 8px;">All your important links in one place !!</p>
         
-        <input type="text" id="searchInput" class="search-bar" placeholder="🔍 Search dashboard resources...">
+        <input type="text" id="searchInput" class="search-bar" placeholder="Search dashboard resources...">
 
         <div class="links-grid" id="linksContainer">
             <a href="https://umfolozi.coltech.co.za/" class="link-card" target="_blank">
@@ -882,7 +1036,7 @@
                 <span>Scientific Calculator</span>
             </div>
             
-            <!-- ========== FIXED TIMETABLE SECTION ========== -->
+            <!-- Timetable -->
             <div class="link-card accordion-btn" id="timetableToggle">
                 <span style="display: flex; align-items: center; width: 100%; justify-content: center; gap: 8px;">
                     <span>📅</span> Campus Timetables <span class="arrow" id="timetableArrow">▼</span>
@@ -895,7 +1049,6 @@
                          Mandeni Campus Timetable
                     </p>
 
-                    <!-- View Button (Google Docs Viewer) -->
                     <a href="https://docs.google.com/viewer?url=https://mkhwanazi-projects.github.io/campushub/timetable.pdf&embedded=true" 
                        target="_blank"
                        class="action-button" 
@@ -903,12 +1056,11 @@
                          View Timetable
                     </a>
 
-                    <!-- Download Button -->
                     <a href="/campushub/timetable.pdf" 
                        download="Mandeni-Campus-Timetable.pdf"
                        class="action-button" 
                        style="text-decoration: none; display: block; width: 80%; max-width: 280px; margin: 0 auto;">
-                        📥 Download Timetable PDF
+                        Download Timetable PDF
                     </a>
 
                     <p style="margin: 14px 0 0 0; font-size: 11px; opacity: 0.7;">
@@ -927,13 +1079,13 @@
                 <div class="accordion-inner-box">
                     <label style="display: block; text-align: left; font-size: 12px; font-weight: 700; margin-bottom: 5px; opacity: 0.9;">Select Subject Stream Type:</label>
                     <select id="icassSubjectStream" class="calc-select">
-                        <option value="vocational">🛠️ Vocational / General Courses (50% Sub-min Required)</option>
-                        <option value="maths">📐 Fundamental Mathematics (30% Sub-min Required)</option>
+                        <option value="vocational">Vocational / General Courses (50% Sub-min Required)</option>
+                        <option value="maths">Fundamental Mathematics (30% Sub-min Required)</option>
                     </select>
                     <div id="icassInputsContainer"></div>
-                    <button class="action-button" id="runIcassCalcBtn">📊 Evaluate Exam Qualification</button>
+                    <button class="action-button" id="runIcassCalcBtn">Evaluate Exam Qualification</button>
                     <div class="calc-result-box" style="margin-top: 15px; border-left: 4px solid #00d4ff;">
-                        ⚖️ Continuous Assessment Score: <span id="icassScoreResult" style="color: #00d4ff; font-size: 16px;">0.0%</span>
+                        Continuous Assessment Score: <span id="icassScoreResult" style="color: #00d4ff; font-size: 16px;">0.0%</span>
                         <div id="icassStatusBadge" style="margin-top: 8px; font-size: 13px; font-weight: 800;"></div>
                     </div>
                 </div>
@@ -983,7 +1135,7 @@
 
             <div class="accordion-content" id="aboutMenu">
                 <div class="accordion-inner-box" style="text-align: left; font-size: 13px; line-height: 1.5;">
-                    <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #00d4ff;">👤 Developer Profile</p>
+                    <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #00d4ff;">Developer Profile</p>
                     <p style="margin: 0 0 14px 0; opacity: 0.95; font-weight: 500;">
                         I'm Sbongokuhle Mkhwanazi, a student from uMfolozi TVET college.
                     </p>
@@ -1001,6 +1153,81 @@
     </footer>
 
     <script>
+    // ========== IMAGE SCANNER FUNCTIONS ==========
+    let extractedText = "";
+
+    function openScanner() {
+        document.getElementById("scanner-modal").classList.add("active");
+    }
+
+    function closeScanner() {
+        document.getElementById("scanner-modal").classList.remove("active");
+        document.getElementById("scannerPreview").style.display = "none";
+        document.getElementById("scannerResult").innerText = "Extracted text will appear here...";
+        document.getElementById("scannerStatus").innerText = "";
+        document.getElementById("translateBtn").style.display = "none";
+        document.getElementById("copyBtn").style.display = "none";
+        extractedText = "";
+    }
+
+    function handleImage(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const preview = document.getElementById("scannerPreview");
+        const status = document.getElementById("scannerStatus");
+        const resultBox = document.getElementById("scannerResult");
+
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+
+        // Start OCR
+        status.innerText = "Scanning image... please wait";
+        resultBox.innerText = "Processing...";
+
+        Tesseract.recognize(file, 'eng', {
+            logger: m => {
+                if (m.status === 'recognizing text') {
+                    status.innerText = `Scanning... ${Math.round(m.progress * 100)}%`;
+                }
+            }
+        }).then(({ data: { text } }) => {
+            extractedText = text.trim();
+            if (extractedText) {
+                resultBox.innerText = extractedText;
+                status.innerText = "Scan complete";
+                document.getElementById("translateBtn").style.display = "inline-block";
+                document.getElementById("copyBtn").style.display = "inline-block";
+            } else {
+                resultBox.innerText = "No text found in the image.";
+                status.innerText = "Done";
+            }
+        }).catch(err => {
+            console.error(err);
+            status.innerText = "Error scanning image";
+            resultBox.innerText = "Something went wrong. Please try again.";
+        });
+    }
+
+    function translateText() {
+        if (!extractedText) return;
+        const url = `https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(extractedText)}&op=translate`;
+        window.open(url, '_blank');
+    }
+
+    function copyText() {
+        if (!extractedText) return;
+        navigator.clipboard.writeText(extractedText).then(() => {
+            document.getElementById("scannerStatus").innerText = "Text copied!";
+        });
+    }
+
+    // ========== EXISTING CODE ==========
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/campushub/sw.js')
@@ -1115,6 +1342,8 @@
     window.addEventListener('click', function(event) {
         var modal = document.getElementById("calc-modal");
         if (event.target === modal) { modal.classList.remove("active"); }
+        var scannerModal = document.getElementById("scanner-modal");
+        if (event.target === scannerModal) { closeScanner(); }
     });
 
     // Greeting logic
@@ -1273,7 +1502,7 @@
 
                 if (missingInput) {
                     scoreResultSpan.innerText = "Error";
-                    badgeEl.innerHTML = '<span style="color: #e74c3c;">⚠️ Enter accurate marks between 0 and 100!</span>';
+                    badgeEl.innerHTML = '<span style="color: #e74c3c;">Enter accurate marks between 0 and 100</span>';
                     return;
                 }
 
@@ -1281,9 +1510,9 @@
                 scoreResultSpan.innerText = finalPercentage.toFixed(1) + "%";
 
                 if (finalPercentage >= config.subMinimum) {
-                    badgeEl.innerHTML = '<span style="color: #2ecc71; background: rgba(46,204,113,0.15); padding: 4px 12px; border-radius: 20px; display: inline-block;">🎉 Exam Qualified! (Sub-minimum met)</span>';
+                    badgeEl.innerHTML = '<span style="color: #2ecc71; background: rgba(46,204,113,0.15); padding: 4px 12px; border-radius: 20px; display: inline-block;">Exam Qualified (Sub-minimum met)</span>';
                 } else {
-                    badgeEl.innerHTML = '<span style="color: #e74c3c; background: rgba(231,76,60,0.15); padding: 4px 12px; border-radius: 20px; display: inline-block;">❌ Below Sub-minimum Requirement (' + config.subMinimum + '%)</span>';
+                    badgeEl.innerHTML = '<span style="color: #e74c3c; background: rgba(231,76,60,0.15); padding: 4px 12px; border-radius: 20px; display: inline-block;">Below Sub-minimum Requirement (' + config.subMinimum + '%)</span>';
                 }
 
                 var menu = document.getElementById("icassMenu");
@@ -1420,4 +1649,4 @@
     });
     </script>
 </body>
-    </html>
+                    </html>
