@@ -10,9 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
 
-    <!-- Tesseract.js for OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-    <!-- TensorFlow.js + COCO-SSD for Object Detection -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 
@@ -928,7 +926,6 @@
         </div>
     </div>
 
-    <!-- Floating Button -->
     <button class="floating-scanner-btn" onclick="openScanner()" title="Image Scanner">📷</button>
 
     <div class="container">
@@ -1064,7 +1061,7 @@
     </footer>
 
     <script>
-    // ========== IMAGE SCANNER (FIXED) ==========
+    // ========== IMAGE SCANNER ==========
     let extractedText = "";
     let objectModel = null;
 
@@ -1141,7 +1138,7 @@
                 preview.src = canvas.toDataURL("image/jpeg", 0.85);
                 preview.style.display = "block";
 
-                // ===== OBJECT DETECTION (FIXED) =====
+                // Object Detection
                 status.innerText = "Detecting objects...";
                 try {
                     if (objectModel) {
@@ -1167,7 +1164,7 @@
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // ===== TEXT EXTRACTION =====
+                // Text Extraction with garbage filter
                 status.innerText = "Extracting text...";
                 canvas.toBlob(async function(blob) {
                     try {
@@ -1178,14 +1175,24 @@
                                 }
                             }
                         });
+
                         extractedText = result.data.text.trim();
-                        if (extractedText) {
+
+                        // Filter garbage text
+                        var cleanText = extractedText.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+                        var letterCount = (cleanText.match(/[a-zA-Z]/g) || []).length;
+
+                        if (extractedText.length > 8 && letterCount > 5) {
                             textResult.innerText = extractedText;
                             document.getElementById("translateBtn").style.display = "inline-block";
                             document.getElementById("copyBtn").style.display = "inline-block";
                         } else {
-                            textResult.innerText = "No text found";
+                            textResult.innerText = "No clear text found";
+                            document.getElementById("translateBtn").style.display = "none";
+                            document.getElementById("copyBtn").style.display = "none";
+                            extractedText = "";
                         }
+
                         status.innerText = "Scan complete";
                     } catch (err) {
                         console.error(err);
@@ -1538,4 +1545,4 @@
     });
     </script>
 </body>
-    </html>
+                    </html>
