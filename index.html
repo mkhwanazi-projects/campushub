@@ -393,7 +393,6 @@
             font-size: 14px;
         }
 
-        /* Floating Button */
         .floating-scanner-btn {
             position: fixed;
             bottom: 25px;
@@ -418,7 +417,6 @@
             box-shadow: 0 8px 25px rgba(0, 212, 255, 0.6);
         }
 
-        /* Scanner Modal */
         .scanner-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -507,7 +505,7 @@
             text-align: left;
         }
 
-        /* Splash Screen Styles */
+        /* Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -778,7 +776,7 @@
     </style>
 </head>
 <body> 
-    <!-- ========== SPLASH SCREEN ========== -->
+    <!-- SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
@@ -805,7 +803,7 @@
                     <ellipse cx="70" cy="95" rx="28" ry="12" fill="#00ffc3" opacity="0" id="innerGlow"/>
                 </svg>
                 <div class="light-cone"></div>
-                <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()" aria-label="Click the lamp cord"></div>
+                <div class="pull-cord" id="pullCord" onclick="triggerLampSwitch()"></div>
             </div>
 
             <div class="robot-wrapper">
@@ -893,7 +891,7 @@
         </div>
     </div>
 
-    <!-- ========== IMAGE SCANNER MODAL ========== -->
+    <!-- IMAGE SCANNER MODAL -->
     <div id="scanner-modal" class="scanner-modal">
         <div class="scanner-box">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
@@ -1066,15 +1064,16 @@
     </footer>
 
     <script>
-    // ========== IMAGE SCANNER WITH OBJECT DETECTION ==========
+    // ========== IMAGE SCANNER (FIXED) ==========
     let extractedText = "";
     let objectModel = null;
 
-    // Load object detection model
-    cocoSsd.load().then(model => {
+    cocoSsd.load().then(function(model) {
         objectModel = model;
         console.log("Object detection model ready");
-    }).catch(err => console.error("Model load error:", err));
+    }).catch(function(err) {
+        console.error("Model load error:", err);
+    });
 
     function openScanner() {
         document.getElementById("scanner-modal").classList.add("active");
@@ -1094,13 +1093,13 @@
     }
 
     function startCamera() {
-        const input = document.getElementById("scannerCamera");
+        var input = document.getElementById("scannerCamera");
         input.value = "";
         input.click();
     }
 
     function startUpload() {
-        const input = document.getElementById("scannerUpload");
+        var input = document.getElementById("scannerUpload");
         input.value = "";
         input.click();
     }
@@ -1109,49 +1108,53 @@
     document.getElementById("scannerUpload").addEventListener("change", handleImage);
 
     async function handleImage(event) {
-        const file = event.target.files[0];
+        var file = event.target.files[0];
         if (!file) return;
 
-        const preview = document.getElementById("scannerPreview");
-        const status = document.getElementById("scannerStatus");
-        const textResult = document.getElementById("scannerResult");
-        const objectResult = document.getElementById("objectResult");
+        var preview = document.getElementById("scannerPreview");
+        var status = document.getElementById("scannerStatus");
+        var textResult = document.getElementById("scannerResult");
+        var objectResult = document.getElementById("objectResult");
 
         status.innerText = "Preparing image...";
         textResult.innerText = "Processing...";
         objectResult.innerText = "Processing...";
 
-        const reader = new FileReader();
+        var reader = new FileReader();
         reader.onload = async function(e) {
-            const img = new Image();
+            var img = new Image();
             img.onload = async function() {
-                const maxWidth = 640;
-                let width = img.width;
-                let height = img.height;
+                var maxWidth = 640;
+                var width = img.width;
+                var height = img.height;
                 if (width > maxWidth) {
                     height = Math.round(height * (maxWidth / width));
                     width = maxWidth;
                 }
 
-                const canvas = document.createElement("canvas");
+                var canvas = document.createElement("canvas");
                 canvas.width = width;
                 canvas.height = height;
-                const ctx = canvas.getContext("2d");
+                var ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
 
                 preview.src = canvas.toDataURL("image/jpeg", 0.85);
                 preview.style.display = "block";
 
-                // Object Detection
+                // ===== OBJECT DETECTION (FIXED) =====
                 status.innerText = "Detecting objects...";
                 try {
                     if (objectModel) {
-                        const predictions = await objectModel.detect(canvas);
+                        var predictions = await objectModel.detect(canvas);
+                        
                         if (predictions.length > 0) {
-                            const objects = predictions
-                                .filter(p => p.score > 0.35)
-                                .map(p => `\( {p.class} ( \){Math.round(p.score * 100)}%)`)
+                            var objects = predictions
+                                .filter(function(p) { return p.score > 0.40; })
+                                .map(function(p) {
+                                    return p.class + " (" + Math.round(p.score * 100) + "%)";
+                                })
                                 .join("\n");
+                            
                             objectResult.innerText = objects || "No clear objects detected";
                         } else {
                             objectResult.innerText = "No objects detected";
@@ -1164,14 +1167,14 @@
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // Text Extraction
+                // ===== TEXT EXTRACTION =====
                 status.innerText = "Extracting text...";
                 canvas.toBlob(async function(blob) {
                     try {
-                        const result = await Tesseract.recognize(blob, 'eng', {
-                            logger: m => {
+                        var result = await Tesseract.recognize(blob, 'eng', {
+                            logger: function(m) {
                                 if (m.status === 'recognizing text') {
-                                    status.innerText = `Extracting text... ${Math.round(m.progress * 100)}%`;
+                                    status.innerText = "Extracting text... " + Math.round(m.progress * 100) + "%";
                                 }
                             }
                         });
@@ -1198,22 +1201,22 @@
 
     function translateText() {
         if (!extractedText) return;
-        const url = `https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(extractedText)}&op=translate`;
+        var url = "https://translate.google.com/?sl=auto&tl=en&text=" + encodeURIComponent(extractedText) + "&op=translate";
         window.open(url, '_blank');
     }
 
     function copyText() {
         if (!extractedText) return;
-        navigator.clipboard.writeText(extractedText).then(() => {
+        navigator.clipboard.writeText(extractedText).then(function() {
             document.getElementById("scannerStatus").innerText = "Text copied!";
         });
     }
 
-    // ========== REST OF THE EXISTING CODE ==========
+    // ========== REST OF THE APP ==========
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/campushub/sw.js')
-                .then(function(registration) { console.log('ServiceWorker registered'); })
+                .then(function(reg) { console.log('ServiceWorker registered'); })
                 .catch(function(err) { console.log('ServiceWorker failed:', err); });
         });
     }
@@ -1268,11 +1271,15 @@
         var toggleBtn = document.getElementById("panelToggleBtn");
         var titleText = document.getElementById("popup-title");
         if (calcPanel.style.display === "none") {
-            calcPanel.style.display = "block"; convPanel.style.display = "none";
-            toggleBtn.innerText = "Convert"; titleText.innerText = "Campus Calculator";
+            calcPanel.style.display = "block";
+            convPanel.style.display = "none";
+            toggleBtn.innerText = "Convert";
+            titleText.innerText = "Campus Calculator";
         } else {
-            calcPanel.style.display = "none"; convPanel.style.display = "block";
-            toggleBtn.innerText = "Math"; titleText.innerText = "Unit Converter";
+            calcPanel.style.display = "none";
+            convPanel.style.display = "block";
+            toggleBtn.innerText = "Math";
+            titleText.innerText = "Unit Converter";
             updateConverterUnits(); 
         }
     }
@@ -1281,7 +1288,8 @@
         var category = document.getElementById("convCategory").value;
         var fromSelect = document.getElementById("convFromUnit");
         var toSelect = document.getElementById("convToUnit");
-        fromSelect.innerHTML = ""; toSelect.innerHTML = "";
+        fromSelect.innerHTML = "";
+        toSelect.innerHTML = "";
         UNIT_DATABASE[category].units.forEach(function(unit, idx) {
             fromSelect.innerHTML += '<option value="' + unit + '">' + unit + '</option>';
             toSelect.innerHTML += '<option value="' + unit + '" ' + (idx === 1 ? 'selected' : '') + '>' + unit + '</option>';
@@ -1297,8 +1305,8 @@
         var resultDisplay = document.getElementById("convOutputResult");
         if (isNaN(inputVal)) { resultDisplay.innerText = "0"; return; }
         if (category === "temperature") {
-            let tempInC = fromUnit === "Celsius (°C)" ? inputVal : fromUnit === "Fahrenheit (°F)" ? (inputVal - 32) * 5 / 9 : inputVal - 273.15;
-            let finalTemp = toUnit === "Celsius (°C)" ? tempInC : toUnit === "Fahrenheit (°F)" ? (tempInC * 9 / 5) + 32 : tempInC + 273.15;
+            var tempInC = fromUnit === "Celsius (°C)" ? inputVal : fromUnit === "Fahrenheit (°F)" ? (inputVal - 32) * 5 / 9 : inputVal - 273.15;
+            var finalTemp = toUnit === "Celsius (°C)" ? tempInC : toUnit === "Fahrenheit (°F)" ? (tempInC * 9 / 5) + 32 : tempInC + 273.15;
             resultDisplay.innerText = Number(finalTemp.toFixed(4)).toString();
             return;
         }
@@ -1308,8 +1316,12 @@
     }
 
     window.addEventListener('click', function(event) {
-        if (event.target === document.getElementById("calc-modal")) document.getElementById("calc-modal").classList.remove("active");
-        if (event.target === document.getElementById("scanner-modal")) closeScanner();
+        if (event.target === document.getElementById("calc-modal")) {
+            document.getElementById("calc-modal").classList.remove("active");
+        }
+        if (event.target === document.getElementById("scanner-modal")) {
+            closeScanner();
+        }
     });
 
     // Greeting
@@ -1448,8 +1460,7 @@
             var lbl2 = document.getElementById("field2Label");
             var inp2 = document.getElementById("field2Input");
             var outputBox = document.getElementById("rpmResult");
-            var speedUnitGroup = document.getElementById("speedUnitGroup");
-            speedUnitGroup.style.display = "block";
+            document.getElementById("speedUnitGroup").style.display = "block";
             if (currentMode === "rpm") {
                 lbl1.innerText = "Cutting Speed (S) in m/min:"; inp1.value = "150";
                 lbl2.innerText = "Workpiece Diameter (d) in mm:"; inp2.value = "40";
@@ -1471,8 +1482,7 @@
             for (var i = 0; i < cards.length; i++) {
                 var card = cards[i];
                 var cardText = (card.textContent || card.innerText).toLowerCase();
-                var matchFound = cardText.indexOf(filter) > -1;
-                card.style.display = matchFound ? "" : "none";
+                card.style.display = cardText.indexOf(filter) > -1 ? "" : "none";
             }
         });
 
@@ -1506,10 +1516,10 @@
                     var rpm = (1000 * val1) / (Math.PI * val2);
                     resultSpan.innerText = (speedUnit === "rps") ? (rpm / 60).toFixed(2) + " RPS" : rpm.toFixed(2) + " RPM";
                 } else if (selectMode === "vc") {
-                    let n_rpm = (speedUnit === "rps") ? val1 * 60 : val1;
+                    var n_rpm = (speedUnit === "rps") ? val1 * 60 : val1;
                     resultSpan.innerText = ((Math.PI * val2 * n_rpm) / 1000).toFixed(2) + " m/min";
                 } else {
-                    let n_rpm = (speedUnit === "rps") ? val2 * 60 : val2;
+                    var n_rpm = (speedUnit === "rps") ? val2 * 60 : val2;
                     resultSpan.innerText = ((1000 * val1) / (Math.PI * n_rpm)).toFixed(2) + " mm";
                 }
             } else {
@@ -1528,4 +1538,4 @@
     });
     </script>
 </body>
-                </html>
+    </html>
