@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
 
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- TensorFlow.js + COCO-SSD for Object Detection -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 
@@ -1061,7 +1061,9 @@
     </footer>
 
     <script>
-    // ========== IMAGE SCANNER ==========
+    // ========== IMAGE SCANNER (Google Cloud Vision) ==========
+    const GOOGLE_API_KEY = "AIzaSyCYpXURbi6KtALwzpfT3nNWiJWE6svIKQM";   // ← Paste your API key here
+
     let extractedText = "";
     let objectModel = null;
 
@@ -1121,7 +1123,8 @@
         reader.onload = async function(e) {
             var img = new Image();
             img.onload = async function() {
-                var maxWidth = 640;
+                // Resize image
+                var maxWidth = 800;
                 var width = img.width;
                 var height = img.height;
                 if (width > maxWidth) {
@@ -1138,12 +1141,11 @@
                 preview.src = canvas.toDataURL("image/jpeg", 0.85);
                 preview.style.display = "block";
 
-                // Object Detection
+                // ===== OBJECT DETECTION =====
                 status.innerText = "Detecting objects...";
                 try {
                     if (objectModel) {
                         var predictions = await objectModel.detect(canvas);
-                        
                         if (predictions.length > 0) {
                             var objects = predictions
                                 .filter(function(p) { return p.score > 0.40; })
@@ -1151,73 +1153,74 @@
                                     return p.class + " (" + Math.round(p.score * 100) + "%)";
                                 })
                                 .join("\n");
-                            
                             objectResult.innerText = objects || "No clear objects detected";
                         } else {
                             objectResult.innerText = "No objects detected";
                         }
                     } else {
-                        objectResult.innerText = "Model still loading... try again in a few seconds";
+                        objectResult.innerText = "Model still loading...";
                     }
                 } catch (err) {
                     console.error(err);
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // Text Extraction (Fixed version)
-                status.innerText = "Extracting text...";
-                canvas.toBlob(async function(blob) {
-                    try {
-                        const result = await Tesseract.recognize(blob, 'eng', {
-                            logger: function(m) {
-                                if (m.status === 'recognizing text') {
-                                    status.innerText = "Extracting text... " + Math.round(m.progress * 100) + "%";
-                                }
-                            }
-                        });
+                // ===== GOOGLE CLOUD VISION OCR =====
+                status.innerText = "Extracting text with Google Vision...";
 
-                        let rawText = result.data.text.trim();
+                try {
+                    // Convert canvas to base64
+                    var base64Image = canvas.toDataURL("image/jpeg", 0.85).split(',')[1];
 
-                        // Softer cleaning
-                        let lines = rawText.split('\n');
-                        let cleanLines = [];
+                    var requestBody = {
+                        requests: [{
+                            image: {
+                                content: base64Image
+                            },
+                            features: [{
+                                type: "TEXT_DETECTION",
+                                maxResults: 10
+                            }]
+                        }]
+                    };
 
-                        for (let i = 0; i < lines.length; i++) {
-                            let line = lines[i].trim();
-                            if (line.length < 3) continue;
-
-                            let letters = (line.match(/[a-zA-Z]/g) || []).length;
-                            let totalChars = line.replace(/\s/g, "").length;
-
-                            if (totalChars > 0 && (letters / totalChars) > 0.40) {
-                                cleanLines.push(line);
-                            }
+                    var response = await fetch(
+                        "https://vision.googleapis.com/v1/images:annotate?key=" + GOOGLE_API_KEY,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(requestBody)
                         }
+                    );
 
-                        let finalText = cleanLines.join('\n').trim();
+                    var data = await response.json();
 
-                        if (finalText.length > 5) {
-                            extractedText = finalText;
-                            textResult.innerText = finalText;
-                            document.getElementById("translateBtn").style.display = "inline-block";
-                            document.getElementById("copyBtn").style.display = "inline-block";
-                        } else {
-                            textResult.innerText = "No clear text found";
-                            document.getElementById("translateBtn").style.display = "none";
-                            document.getElementById("copyBtn").style.display = "none";
-                            extractedText = "";
-                        }
-
-                        status.innerText = "Scan complete";
-
-                    } catch (err) {
-                        console.error("OCR Error:", err);
-                        textResult.innerText = "Could not extract text from this image";
-                        status.innerText = "Done";
+                    if (data.responses && data.responses[0].fullTextAnnotation) {
+                        extractedText = data.responses[0].fullTextAnnotation.text.trim();
+                        textResult.innerText = extractedText;
+                        document.getElementById("translateBtn").style.display = "inline-block";
+                        document.getElementById("copyBtn").style.display = "inline-block";
+                    } else if (data.responses && data.responses[0].textAnnotations && data.responses[0].textAnnotations.length > 0) {
+                        extractedText = data.responses[0].textAnnotations[0].description.trim();
+                        textResult.innerText = extractedText;
+                        document.getElementById("translateBtn").style.display = "inline-block";
+                        document.getElementById("copyBtn").style.display = "inline-block";
+                    } else {
+                        textResult.innerText = "No clear text found";
                         document.getElementById("translateBtn").style.display = "none";
                         document.getElementById("copyBtn").style.display = "none";
+                        extractedText = "";
                     }
-                }, "image/jpeg", 0.85);
+
+                    status.innerText = "Scan complete";
+
+                } catch (err) {
+                    console.error("Vision API Error:", err);
+                    textResult.innerText = "Could not extract text (check API key or internet)";
+                    status.innerText = "Done";
+                }
             };
             img.src = e.target.result;
         };
@@ -1237,7 +1240,7 @@
         });
     }
 
-    // ========== REST OF THE APP ==========
+    // ========== REST OF THE APP (same as before) ==========
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/campushub/sw.js')
