@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
 
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 
@@ -1164,7 +1164,7 @@
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // Text Extraction with garbage filter
+                // Text Extraction with stricter filter
                 status.innerText = "Extracting text...";
                 canvas.toBlob(async function(blob) {
                     try {
@@ -1178,12 +1178,27 @@
 
                         extractedText = result.data.text.trim();
 
-                        // Filter garbage text
-                        var cleanText = extractedText.replace(/[^a-zA-Z0-9\s]/g, "").trim();
-                        var letterCount = (cleanText.match(/[a-zA-Z]/g) || []).length;
+                        // Stricter cleaning
+                        var lines = extractedText.split('\n');
+                        var cleanLines = [];
 
-                        if (extractedText.length > 8 && letterCount > 5) {
-                            textResult.innerText = extractedText;
+                        for (var i = 0; i < lines.length; i++) {
+                            var line = lines[i].trim();
+                            if (line.length < 4) continue;
+
+                            var letters = (line.match(/[a-zA-Z]/g) || []).length;
+                            var total = line.replace(/\s/g, "").length;
+
+                            if (total > 0 && (letters / total) > 0.55) {
+                                cleanLines.push(line);
+                            }
+                        }
+
+                        var finalText = cleanLines.join('\n').trim();
+
+                        if (finalText.length > 10) {
+                            extractedText = finalText;
+                            textResult.innerText = finalText;
                             document.getElementById("translateBtn").style.display = "inline-block";
                             document.getElementById("copyBtn").style.display = "inline-block";
                         } else {
@@ -1545,4 +1560,4 @@
     });
     </script>
 </body>
-                    </html>
+    </html>
