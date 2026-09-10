@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
 
-    <script src="https://cdn.jsr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 
@@ -1164,11 +1164,11 @@
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // Text Extraction with stricter filter
+                // Text Extraction (Fixed version)
                 status.innerText = "Extracting text...";
                 canvas.toBlob(async function(blob) {
                     try {
-                        var result = await Tesseract.recognize(blob, 'eng', {
+                        const result = await Tesseract.recognize(blob, 'eng', {
                             logger: function(m) {
                                 if (m.status === 'recognizing text') {
                                     status.innerText = "Extracting text... " + Math.round(m.progress * 100) + "%";
@@ -1176,27 +1176,27 @@
                             }
                         });
 
-                        extractedText = result.data.text.trim();
+                        let rawText = result.data.text.trim();
 
-                        // Stricter cleaning
-                        var lines = extractedText.split('\n');
-                        var cleanLines = [];
+                        // Softer cleaning
+                        let lines = rawText.split('\n');
+                        let cleanLines = [];
 
-                        for (var i = 0; i < lines.length; i++) {
-                            var line = lines[i].trim();
-                            if (line.length < 4) continue;
+                        for (let i = 0; i < lines.length; i++) {
+                            let line = lines[i].trim();
+                            if (line.length < 3) continue;
 
-                            var letters = (line.match(/[a-zA-Z]/g) || []).length;
-                            var total = line.replace(/\s/g, "").length;
+                            let letters = (line.match(/[a-zA-Z]/g) || []).length;
+                            let totalChars = line.replace(/\s/g, "").length;
 
-                            if (total > 0 && (letters / total) > 0.55) {
+                            if (totalChars > 0 && (letters / totalChars) > 0.40) {
                                 cleanLines.push(line);
                             }
                         }
 
-                        var finalText = cleanLines.join('\n').trim();
+                        let finalText = cleanLines.join('\n').trim();
 
-                        if (finalText.length > 10) {
+                        if (finalText.length > 5) {
                             extractedText = finalText;
                             textResult.innerText = finalText;
                             document.getElementById("translateBtn").style.display = "inline-block";
@@ -1209,10 +1209,13 @@
                         }
 
                         status.innerText = "Scan complete";
+
                     } catch (err) {
-                        console.error(err);
-                        textResult.innerText = "Text extraction failed";
+                        console.error("OCR Error:", err);
+                        textResult.innerText = "Could not extract text from this image";
                         status.innerText = "Done";
+                        document.getElementById("translateBtn").style.display = "none";
+                        document.getElementById("copyBtn").style.display = "none";
                     }
                 }, "image/jpeg", 0.85);
             };
