@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <link rel="manifest" href="manifest.json">
 
-    <!-- TensorFlow.js + COCO-SSD for Object Detection -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
 
@@ -898,7 +897,7 @@
             </div>
 
             <p style="font-size:13px; color:var(--card-text); opacity:0.8; margin:0 0 15px 0;">
-                Take a photo or upload an image
+                Take a photo or upload an image (15 scans per day)
             </p>
 
             <div class="scanner-actions">
@@ -1061,8 +1060,28 @@
     </footer>
 
     <script>
-    // ========== IMAGE SCANNER (Google Cloud Vision) ==========
-    const GOOGLE_API_KEY = "AIzaSyCYpXURbi6KtALwzpfT3nNWiJWE6svIKQM";   // ← Paste your API key here
+    // ========== GOOGLE VISION + DAILY LIMIT ==========
+    const GOOGLE_API_KEY = "AIzaSyCYpXURbi6KtALwzpfT3nNWiJWE6svIKQM";   // ← Paste your real API key here
+    const DAILY_SCAN_LIMIT = 15;
+
+    function getTodayKey() {
+        const today = new Date();
+        return "scans_" + today.getFullYear() + "-" + (today.getMonth()+1) + "-" + today.getDate();
+    }
+
+    function getScanCount() {
+        return parseInt(localStorage.getItem(getTodayKey()) || "0");
+    }
+
+    function increaseScanCount() {
+        const count = getScanCount() + 1;
+        localStorage.setItem(getTodayKey(), count);
+        return count;
+    }
+
+    function canScan() {
+        return getScanCount() < DAILY_SCAN_LIMIT;
+    }
 
     let extractedText = "";
     let objectModel = null;
@@ -1076,6 +1095,10 @@
 
     function openScanner() {
         document.getElementById("scanner-modal").classList.add("active");
+        const remaining = DAILY_SCAN_LIMIT - getScanCount();
+        document.getElementById("scannerStatus").innerText = remaining > 0 
+            ? remaining + " scans remaining today" 
+            : "Daily limit reached (15 scans)";
     }
 
     function closeScanner() {
@@ -1092,12 +1115,20 @@
     }
 
     function startCamera() {
+        if (!canScan()) {
+            document.getElementById("scannerStatus").innerText = "Daily limit reached (15 scans). Try again tomorrow.";
+            return;
+        }
         var input = document.getElementById("scannerCamera");
         input.value = "";
         input.click();
     }
 
     function startUpload() {
+        if (!canScan()) {
+            document.getElementById("scannerStatus").innerText = "Daily limit reached (15 scans). Try again tomorrow.";
+            return;
+        }
         var input = document.getElementById("scannerUpload");
         input.value = "";
         input.click();
@@ -1109,6 +1140,13 @@
     async function handleImage(event) {
         var file = event.target.files[0];
         if (!file) return;
+
+        if (!canScan()) {
+            document.getElementById("scannerStatus").innerText = "Daily limit reached (15 scans). Try again tomorrow.";
+            document.getElementById("scannerResult").innerText = "Limit reached";
+            document.getElementById("objectResult").innerText = "Limit reached";
+            return;
+        }
 
         var preview = document.getElementById("scannerPreview");
         var status = document.getElementById("scannerStatus");
@@ -1123,7 +1161,6 @@
         reader.onload = async function(e) {
             var img = new Image();
             img.onload = async function() {
-                // Resize image
                 var maxWidth = 800;
                 var width = img.width;
                 var height = img.height;
@@ -1141,7 +1178,7 @@
                 preview.src = canvas.toDataURL("image/jpeg", 0.85);
                 preview.style.display = "block";
 
-                // ===== OBJECT DETECTION =====
+                // Object Detection
                 status.innerText = "Detecting objects...";
                 try {
                     if (objectModel) {
@@ -1165,22 +1202,16 @@
                     objectResult.innerText = "Object detection failed";
                 }
 
-                // ===== GOOGLE CLOUD VISION OCR =====
+                // Google Cloud Vision OCR
                 status.innerText = "Extracting text with Google Vision...";
 
                 try {
-                    // Convert canvas to base64
                     var base64Image = canvas.toDataURL("image/jpeg", 0.85).split(',')[1];
 
                     var requestBody = {
                         requests: [{
-                            image: {
-                                content: base64Image
-                            },
-                            features: [{
-                                type: "TEXT_DETECTION",
-                                maxResults: 10
-                            }]
+                            image: { content: base64Image },
+                            features: [{ type: "TEXT_DETECTION", maxResults: 10 }]
                         }]
                     };
 
@@ -1188,9 +1219,7 @@
                         "https://vision.googleapis.com/v1/images:annotate?key=" + GOOGLE_API_KEY,
                         {
                             method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
+                            headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(requestBody)
                         }
                     );
@@ -1214,7 +1243,9 @@
                         extractedText = "";
                     }
 
-                    status.innerText = "Scan complete";
+                    // Increase scan count
+                    increaseScanCount();
+                    status.innerText = "Scan complete (" + getScanCount() + "/" + DAILY_SCAN_LIMIT + " today)";
 
                 } catch (err) {
                     console.error("Vision API Error:", err);
@@ -1240,7 +1271,7 @@
         });
     }
 
-    // ========== REST OF THE APP (same as before) ==========
+    // ========== REST OF THE APP ==========
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
             navigator.serviceWorker.register('/campushub/sw.js')
