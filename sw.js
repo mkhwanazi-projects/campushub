@@ -1,18 +1,20 @@
-const CACHE_NAME = 'campus-hub-v6';
+const CACHE_NAME = 'campus-hub-v7';
 
-// Files that must be available offline from the start
+// Core files that must work offline
 const PRE_CACHE = [
   '/campushub/',
   '/campushub/index.html',
   '/campushub/learning.html',
   '/campushub/library.html',
   '/campushub/mfolozi.png',
+  '/campushub/logo.jpg',
   '/campushub/manifest.json',
   '/campushub/app-icon-large.png',
+  '/campushub/timetable.pdf',
   'https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap'
 ];
 
-// Install - pre-cache important files
+// Install
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -25,7 +27,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate - remove old caches
+// Activate - clean old caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -41,29 +43,30 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch - Cache First strategy + automatic caching of new files
+// Fetch strategy
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
   if (event.request.method !== 'GET') return;
+
+  // Don't cache Google Vision or TensorFlow requests
+  if (event.request.url.includes('vision.googleapis.com') ||
+      event.request.url.includes('tensorflow') ||
+      event.request.url.includes('cdn.jsdelivr.net')) {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // 1. Return from cache if available
       if (cachedResponse) {
         return cachedResponse;
       }
 
-      // 2. Not in cache → try network
       return fetch(event.request)
         .then((networkResponse) => {
-          // Only cache successful responses
           if (!networkResponse || networkResponse.status !== 200 || networkResponse.type === 'opaque') {
             return networkResponse;
           }
 
-          // Clone the response because it can only be read once
           const responseToCache = networkResponse.clone();
-
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
           });
@@ -71,7 +74,7 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // 3. Offline and not in cache → show main page as fallback
+          // Offline fallback
           if (event.request.mode === 'navigate') {
             return caches.match('/campushub/index.html');
           }
