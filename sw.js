@@ -1,4 +1,4 @@
-const CACHE_NAME = 'campus-hub-v7';
+const CACHE_NAME = 'campus-hub-v8';
 
 // Core files that must work offline
 const PRE_CACHE = [
